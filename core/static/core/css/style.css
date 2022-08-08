@@ -21,6 +21,17 @@ ul {
   margin: 0;
   padding-left: 0px !important;
 }
+a:hover {
+  text-decoration: none !important;
+}
+.text-primary {
+  color: #0029ea !important;
+}
+
+.bg-primary {
+  background-color: #0029ea !important;
+}
+
 .container-shadow {
   box-shadow: 0 20px 27px 0 rgb(0 0 0 / 5%);
   border-radius: 1rem;
@@ -36,11 +47,12 @@ ul {
 
 /* Navbar menu button icon  */
 .navbar-brand {
-  color: #2ba7df;
-  font-weight: 600 !important;
+  font-size: 24px;
+  color: #0029ea;
+  font-weight: 300 !important;
 }
 .navbar-brand:hover {
-  color: #2ba7df;
+  color: #0029ea;
 }
 
 .nav-item .nav-link {
@@ -53,13 +65,13 @@ ul {
 }
 
 .active .nav-link {
-  color: #2ba7df !important;
+  color: #0029ea !important;
 }
 .nav-item:hover .nav-link {
-  color: #2ba7df !important;
+  color: #0029ea !important;
 }
 .nav-link:focus {
-  color: #2ba7df !important;
+  color: #0029ea !important;
 }
 
 .menu-btn {
@@ -99,7 +111,7 @@ ul {
   box-shadow: none !important;
 }
 
-.home-nav {
+/* .home-nav {
   position: absolute !important;
   z-index: 100;
   background: rgba(255, 255, 255, 0.35);
@@ -107,7 +119,7 @@ ul {
   padding-left: 5vw;
   padding-right: 5vw;
   min-height: 56px;
-}
+} */
 
 .top-nav {
   z-index: 100;
@@ -156,13 +168,16 @@ ul {
 }
 .username {
   cursor: pointer;
+  background-color: #0029ea;
+  border: 1px solid #0029ea;
+  padding: 1px 12px;
 }
 .drop-down {
   display: none;
   position: absolute;
   text-align: center;
   top: 0px;
-  right: -20px;
+  right: -28px;
   min-width: 150px;
   padding-top: 15px;
 }
@@ -172,6 +187,10 @@ ul {
 }
 .account:hover .drop-down {
   display: block;
+}
+.drop-down .nav-link:hover {
+  background-color: #0029ea;
+  color: #fff !important;
 }
 
 @media screen and (max-width: 768px) {
@@ -210,7 +229,7 @@ ul {
 
   .active .nav-link {
     background-color: #ffffff;
-    color: #2ba7df !important;
+    color: #0029ea !important;
   }
 }
 /* End Navbar menu button icon  */
@@ -242,7 +261,7 @@ ul {
 /* Main section */
 
 .main {
-  min-height: 80vh;
+  min-height: 100vh;
 }
 .messages .info {
   color: rgb(0, 0, 0);
@@ -379,7 +398,7 @@ ul {
 }
 .explore-btn a:hover {
   color: #d6d6d6;
-  background: #2ba7df;
+  background: #0029ea;
 }
 
 @media screen and (max-width: 768px) {
@@ -657,11 +676,11 @@ ul {
 
 .feature-item .feature-icon i {
   font-size: 35px;
-  color: #2ba7df;
+  color: #0029ea;
 }
 
 .feature-item h4 {
-  color: #2ba7df;
+  color: #0029ea;
 }
 
 .feature-item p {
@@ -716,12 +735,12 @@ ul {
 
 .card-title .product-price,
 .discount-price {
-  color: #2ba7df;
+  color: #0029ea;
   font-size: 18px;
 }
 
 .card-title .product-price {
-  color: #2ba7df;
+  color: #0029ea;
   font-size: 18px;
 }
 
@@ -807,10 +826,14 @@ ul {
   color: #1537f7;
 }
 /* Goal Section Is End */
-/* Fotter */
+/* Footer */
+.ft_bg {
+  background-color: #1537f7;
+}
 .ft_bg a {
   text-decoration: none;
 }
+
 /* Fotter */
 
 /* Choose Us Section is Start */
@@ -934,7 +957,7 @@ ul {
   width: 150px;
   height: 150px;
   border-radius: 50%;
-  border: 5px solid #2ba7df;
+  border: 5px solid #0029ea;
 }
 .custom-file {
   height: calc(1.5em + 0.75rem + 10px);
@@ -942,7 +965,7 @@ ul {
 
 .custom-file label {
   position: relative;
-  top: -16px;
+  top: 0px;
 }
 .custom-file-input {
   height: 0px !important;

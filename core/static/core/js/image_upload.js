@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const file = document.querySelector("input[type=file]").files[0];
     readURL(file);
-    submitImageBtn.style.display = "block";
+    submitImageBtn.style.display = "table";
     errors.style.display = "none";
   });
 

@@ -4,27 +4,23 @@
 {% block title %} Profile {% endblock title %}
 
 {% block stylesheet %}
-<link rel="stylesheet" href="{% static 'core/css/style.css' %}">
+<link rel="stylesheet" href="{% static 'core/css/profile.css' %}">
 {% endblock stylesheet %}
+
+
 
 {% block content %}
 <div class="container">
     <!-- profile page -->
-    <div class="profile-page card mx-auto border-0 my-5 py-5 shadow">
-        <div class="profile-info card-body">
-            <div class="row">
-                <div class="col-md-4 profile-image-wrapper">
-                    <!-- <div class="profile-image">
-                        {% if user.image %}
-                        <img src="{{user.image.url}}" alt="profile" class="img-fluid ">
-                        {% else %}
-                        <img src="{% static 'core/images/user.png' %}" alt="profile" class="img-fluid ">
-                        {% endif %}
-                    </div> -->
+    <div class="profile-info py-5">
+        <div class="card shadow border-0 mx-auto">
+            <h2 class="font-weight-normal py-2 card-header text-center">Profile Details</h2>
+            <div class="row justify-content-center">
 
+                <div class="col-md-6 profile-image-wrapper">
 
-
-                    <form class="update-profile-image-form w-75 mx-auto" method="post" enctype="multipart/form-data">
+                    <form class="update-profile-image-form w-75 mx-auto p-2" method="post"
+                        enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class="form-group mb-0">
                             {% if profile_image_form.initial.image %}
@@ -37,7 +33,7 @@
                                     id="inputImage" accept="image/*">
                                 <!-- <label class="custom-file-label file-field text-muted" for="inputImage">Change
                                     image</label> -->
-                                <label class="btn btn-sm btn-primary btn-block rounded-0" for="inputImage">Change
+                                <label class="btn btn-sm btn-primary  rounded-0" for="inputImage">Change
                                     Image</label>
                             </div>
 
@@ -50,7 +46,7 @@
                             <div class="custom-file">
                                 <input type="file" class="custom-file-input form-control form-control-sm" name="image"
                                     id="inputImage" accept="image/*">
-                                <label class="btn btn-sm btn-primary btn-block rounded-0" for="inputImage">Upload
+                                <label class="btn btn-sm btn-primary  rounded-0" for="inputImage">Upload
                                     Image</label>
                             </div>
                             {% endif %}
@@ -68,32 +64,52 @@
                             </div>
                             {% endif %}
                         </div>
-                        <button class="btn btn-sm btn-primary btn-block rounded-0 image-submit-btn" type="submit">Save
+                        <button class="btn btn-sm btn-primary  rounded-0 image-submit-btn" type="submit">Save
                             changes</button>
 
                     </form>
                 </div>
 
-                <div class="col-md-8 d-flex justify-content-center">
-                    <div class="profile-content mt-4 mt-sm-0">
-                        <div class="display-6 mb-3">Profile Information</div>
+                <div class="col-md-6 d-flex justify-content-center">
+                    <div class="profile-content mt-4 mt-sm-0 p-2">
                         <!-- <h1 class="h3 mb-3 font-weight-normal">Username: {{user.username}}</h1> -->
-                        <p class="small text-muted">{% if user.first_name %} Name: {{user.first_name}}
-                            {{user.last_name}}{% endif %}</p>
-                        <p class="small text-muted">{% if user.email %}Email: {{user.email}} {% endif %}</p>
-                        <p class="small text-muted">{% if user.phone %}Phone: {{user.phone}} {% endif %}</p>
-                        <p class="small text-muted">Joined at - {{user.date_joined}}</p>
-                        <a class="btn btn-sm btn-primary btn-block rounded-0"
-                            href="{% url 'core:profile_update' %}">Edit profile information</a>
+                        <p class="text-muted">Name: {{user.first_name}}
+                            {{user.last_name}}</p>
+                        <p class="text-muted">Email: {{user.email}} </p>
+                        <p class="text-muted">Phone: {{user.phone}} </p>
+                        <p class="text-muted">Joined at - {{user.date_joined}}</p>
+                        <a class="btn btn-sm btn-primary d-table mx-auto rounded-0"
+                            href="{% url 'core:profile_update' %}">Edit profile
+                            information</a>
                     </div>
                 </div>
             </div>
         </div>
 
+        <div class="mt-5">
+            <div class="card shadow border-0  mx-auto">
+                <h2 class="font-weight-normal py-2 card-header text-center">Account Details</h2>
+                <div class="profile-content p-4 ">
+                    <p><b>Account Number:</b> {{account_info.account_no}}</p>
+                    <p><b>Account Balance:</b> {{account_info.balance}}</p>
+
+                    <b>Recente Transcations:</b>
+                    {% for transaction in transactions %}
+                    <p>Transaction id: {{transaction.tanscation_id}}</p>
+                    <p>Amount: {{transaction.amount}}</p>
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
     </div>
-    {% endblock content %}
 
 
-    {% block script %}
-    <script src="{% static 'core/js/image_upload.js' %}"></script>
-    {% endblock %}
+
+</div>
+{% endblock content %}
+
+
+{% block script %}
+<script src="{% static 'core/js/image_upload.js' %}"></script>
+{% endblock %}

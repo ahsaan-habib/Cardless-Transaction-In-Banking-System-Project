@@ -3,9 +3,6 @@
 
 {% block title %} Login {% endblock title %}
 
-{% block stylesheet %}
-<link rel="stylesheet" href="{% static 'account/css/style.css' %}">
-{% endblock stylesheet %}
 
 {% block content %}
 <div class="container">
@@ -37,9 +34,9 @@
                 </div>
                 {{ field }}
 
-                {% if field.help_text %}
+                <!-- {% if field.help_text %}
                 <div class="help small text-muted">{{ field.help_text|safe }}</div>
-                {% endif %}
+                {% endif %} -->
             </div>
             {% endfor %}
 
@@ -53,16 +50,11 @@
             </div>
             {% endif %}
 
-            <button class="btn btn-sm btn-primary btn-block rounded-0" type="submit">Log in</button>
+            <button class="btn btn-sm btn-primary btn-block rounded-0 my-4" type="submit">Log in</button>
 
         </form>
 
-        <div class="facebook-login w-75 mx-auto">
-            <a class="btn btn-sm btn-primary rounded-0 border-0 d-table mx-auto"
-                href="{#% url 'social:begin' 'facebook' %#}">Login with facebook</a>
-        </div>
-
-        <div class="d-flex justify-content-between w-75 mx-auto ">
+        <div class="d-flex justify-content-between w-75 mx-auto">
             <a class="" href="{#% url 'password_reset' %#}">Reset password</a>
             <a class="" href="{% url 'core:register' %}">Register</a>
         </div>

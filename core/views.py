@@ -6,6 +6,8 @@ from django.urls import reverse
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 
+from banking.models import Account
+
 from .forms import ProfileImageUpdateForm, ProfileUpdateForm, RegistrationForm, AuthenticateForm
 
 
@@ -30,6 +32,8 @@ def profile_view(request):
         form = ProfileImageUpdateForm(instance=request.user)
 
     user = request.user
+    account = Account.objects.filter(user=user).first()
+    context['account_info'] = account
     context['user'] = user
     context['profile_image_form'] = form
     return render(request, 'core/profile.html', context)

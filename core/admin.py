@@ -2,5 +2,5 @@ from django.contrib import admin
 from . import models
 
 @admin.register(models.User)
-class PostAdmin(admin.ModelAdmin):
+class CoreAdmin(admin.ModelAdmin):
     pass

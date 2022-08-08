@@ -1,0 +1,10 @@
+.home-content {
+  margin: 50px auto;
+}
+
+.home-tab,
+.home-welcome {
+  font-size: 30px;
+  font-weight: 300;
+  padding: 24px;
+}

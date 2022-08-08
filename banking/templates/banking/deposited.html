@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Deposite {% endblock title %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'banking/css/index.css' %}">
+{% endblock stylesheet %}
+
+{% block content %}
+<div class="container">
+    {% if unauthorized %}
+    <div class="shadow p-5 my-5">
+        <div class="d-flex lead text-danger px-4 py-4 my-4 bg-light">
+            Ops! {{ unauthorized }}. please contact the admin if you are an employee.
+        </div>
+    </div>
+
+    {% else %}
+
+
+    {% if success_message %}
+
+    <div class="container">
+        <div class="d-flex lead text-success px-4 py-4 my-4 bg-light justify-content-around">
+            {{ success_message }}.
+
+            <a class="btn btn-success" href="{% url 'banking:deposite' %}">Deposite Again</a>
+        </div>
+
+        <div class="d-flex justify-content-center shadow w-75 mx-auto">
+            <div class="profile-content mt-4 mt-sm-0">
+                <div class="display-4 mb-3">Account Details</div>
+                <p><b>Account Number:</b> {{account_info.account_no}}</p>
+                <p><b>Account Balance:</b> {{account_info.balance}}</p>
+
+                <p><b>Customer's name:</b>
+                    <span class="mr-2">{{account_info.user.first_name}}
+                    </span> {{account_info.user.first_name}}
+                </p>
+                <p><b>Customer's Email:</b>{{account_info.user.email}}</p>
+
+                <p><b>Customer's phone number:</b> {{account_info.user.phone}}</p>
+            </div>
+        </div>
+
+    </div>
+    {% endif %}
+
+    {% endif %}
+</div>
+{% endblock content %}

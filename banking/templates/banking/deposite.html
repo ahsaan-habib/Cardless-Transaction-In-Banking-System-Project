@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Deposite {% endblock title %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'banking/css/index.css' %}">
+{% endblock stylesheet %}
+
+{% block content %}
+<div class="container">
+    {% if unauthorized %}
+    <div class="shadow p-5 my-5">
+        <div class="d-flex lead text-danger px-4 py-4 my-4 bg-light">
+            Ops! {{ unauthorized }}. please contact the admin if you are an employee.
+        </div>
+    </div>
+
+    {% else %}
+
+    <div class="card col-12 col-lg-6 mx-auto border-0 my-5 py-5 shadow">
+
+        <form class="deposite-form w-75 mx-auto" method="post">
+            {% csrf_token %}
+            <h1 class="h3 mb-4 font-weight-normal text-center">Deposite</h1>
+
+            <div class="form-group">
+                <div class="input-label">
+                    Account Number
+                </div>
+                <input type="number" name="account_no" id="inputAccountNo"
+                    class="form-control form-control-sm rounded-0" placeholder="Enter Customer's Account Number"
+                    value="{{ account_no }}" required autofocus>
+
+                {% if account_error_message %}
+                <div class="text-danger">
+                    <p>{{account_error_message}}</p>
+                </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <div class="input-label">
+                    Amount
+                </div>
+                <input type="number" name="amount" id="inputAmount" class="form-control form-control-sm rounded-0"
+                    placeholder="Amount to Deposite" value="{{amount}}" required>
+                {% if amount_error_message %}
+                <div class="text-danger">
+                    <p>{{amount_error_message}}</p>
+                </div>
+                {% endif %}
+            </div>
+
+            {% if form_error_message %}
+            <div class="text-danger">
+                <p>{{form_error_message}}</p>
+            </div>
+            {% endif %}
+
+            <button class="btn btn-sm btn-primary btn-block rounded-0 my-4" type="submit">Add Money To Account</button>
+
+        </form>
+
+    </div>
+    {% endif %}
+
+
+
+
+
+</div>
+{% endblock content %}

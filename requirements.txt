@@ -1,8 +1,9 @@
 asgiref==3.5.2
 beautifulsoup4==4.11.1
 Django==4.0.4
-django-bootstrap4==22.1
+django-bootstrap-static==4.2.1
 django-extensions==3.1.5
+Pillow==9.2.0
 pydotplus==2.0.2
 pyparsing==3.0.9
 soupsieve==2.3.2.post1

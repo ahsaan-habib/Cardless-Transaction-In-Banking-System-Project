@@ -93,11 +93,54 @@
                     <p><b>Account Number:</b> {{account_info.account_no}}</p>
                     <p><b>Account Balance:</b> {{account_info.balance}}</p>
 
-                    <b>Recente Transcations:</b>
-                    {% for transaction in transactions %}
-                    <p>Transaction id: {{transaction.tanscation_id}}</p>
-                    <p>Amount: {{transaction.amount}}</p>
-                    {% endfor %}
+                    <h4 class="font-weight-normal">Recent Transcations:</h4>
+                    <table class="table table-striped table-hover transaction-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Id</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for transaction in transactions %}
+                            <tr>
+                                <td>{{transaction.updated_at}}</td>
+                                <td>
+                                    <a href="{% url 'banking:transaction_details' transaction.transaction_id %}">
+                                        {{transaction.transaction_id}}
+                                    </a>
+                                </td>
+                                <td>
+                                    {% if transaction.transaction_type == 'D' %}
+                                    Depositted
+                                    {% elif transaction.transaction_type == 'W' %}
+                                    withdrawn
+                                    {% elif transaction.transaction_type == 'T' %}
+                                    {% if transaction.from_account.user == user %}
+                                    Transferred
+                                    {% else %}
+                                    Received
+                                    {% endif %}
+                                    {% endif %}
+                                </td>
+                                <td>{{transaction.amount}}</td>
+                                <td>
+                                    {% if transaction.status == 'P' %}
+                                    <span class="text-warning">Pending</span>
+                                    {% elif transaction.status == 'C' %}
+                                    <span class="text-success">Success</span>
+                                    {% else %}
+                                    <span class="text-danger">Failed</span>
+                                    {% endif %}
+                                </td>
+
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
 
                 </div>
             </div>

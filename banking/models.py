@@ -26,7 +26,7 @@ class Account(models.Model):
     
 
     def __str__(self):
-        return f"{self.account_no} - {self.balance}"
+        return f"{self.user} - {self.account_no}"
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)

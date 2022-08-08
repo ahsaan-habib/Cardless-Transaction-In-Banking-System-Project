@@ -5,8 +5,9 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 
-from banking.models import Account
+from banking.models import Account, Transaction
 
 from .forms import ProfileImageUpdateForm, ProfileUpdateForm, RegistrationForm, AuthenticateForm
 
@@ -33,8 +34,14 @@ def profile_view(request):
 
     user = request.user
     account = Account.objects.filter(user=user).first()
-    context['account_info'] = account
+    if account:
+        transactions = Transaction.objects.filter(
+                Q(to_account=account) | Q(from_account=account)
+            ).order_by('-updated_at')[:10]
+        context['transactions'] = transactions
+    
     context['user'] = user
+    context['account_info'] = account
     context['profile_image_form'] = form
     return render(request, 'core/profile.html', context)
 

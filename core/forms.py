@@ -23,7 +23,7 @@ class RegistrationForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super(RegistrationForm, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
-            visible.field.widget.attrs['class'] = 'form-control form-control-sm'
+            visible.field.widget.attrs['class'] = 'form-control'
         
 
     def clean(self):
@@ -55,7 +55,7 @@ class AuthenticateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(AuthenticateForm, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
-            visible.field.widget.attrs['class'] = 'form-control form-control-sm'
+            visible.field.widget.attrs['class'] = 'form-control'
 
     def clean(self):
         if self.is_valid():
@@ -90,7 +90,7 @@ class ProfileUpdateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ProfileUpdateForm, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
-            visible.field.widget.attrs['class'] = 'form-control form-control-sm rounded-0'
+            visible.field.widget.attrs['class'] = 'form-control rounded-0'
 
     def clean_email(self):
         email = self.cleaned_data['email']

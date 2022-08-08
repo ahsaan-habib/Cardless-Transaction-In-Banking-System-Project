@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Transaction Details {% endblock title %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'banking/css/index.css' %}">
+{% endblock stylesheet %}
+
+{% block content %}
+<div class="container">
+
+    <div class="content py-4">
+
+        {% if error_message %}
+        <div class="d-flex lead text-danger px-4 py-4 my-4 bg-light justify-content-around">
+            {{ error_message }}.
+        </div>
+        {% else %}
+
+        {% if user.user_type == 'A' or user.user_type == 'E' %}
+
+        <!-- seach transaction form -->
+        <div class="d-flex justify-content-center shadow w-75 mx-auto mb-5">
+            <div class="profile-content mt-4 mt-sm-0">
+                <div class="title-text mb-3">Search Transaction</div>
+                <form class="transaction-form w-100 mx-auto d-flex" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <input type="text" class="form-control  rounded-0" id="transaction_id" name="transaction_id"
+                            placeholder="Enter Transaction ID">
+                    </div>
+                    <div>
+
+                        <button type="submit" class="btn btn-primary rounded-0 d-table">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {% endif %}
+
+
+        <div class="d-flex justify-content-center shadow w-75 mx-auto">
+            <div class="profile-content mt-4 mt-sm-0 py-2">
+                <div class="title-text mb-3">Transaction Details</div>
+                <p><b>ID:</b> {{transaction.transaction_id}}</p>
+                <p><b>Type:</b>
+                    {% if transaction.transaction_type == 'D' %}
+                    Depositted
+                    {% elif transaction.transaction_type == 'W' %}
+                    withdrawn
+                    {% elif transaction.transaction_type == 'T' %}
+                    {% if transaction.to_account.user == user %}
+                    Received
+                    {% else %}
+                    Transferred
+                    {% endif %}
+                    {% endif %}
+                </p>
+                <p><b>Amount:</b> {{transaction.amount}}</p>
+                <p><b>time:</b> {{transaction.updated_at}}</p>
+                <p><b>Status:</b>
+                    {% if transaction.status == 'P' %}
+                    <span class="text-warning">Pending</span>
+                    {% elif transaction.status == 'C' %}
+                    <span class="text-success">Success</span>
+                    {% else %}
+                    <span class="text-danger">Failed</span>
+                    {% endif %}
+                </p>
+
+
+
+
+                {% if transaction.transaction_type == 'T' %}
+                {% if transaction.from_account.user == user %}
+                <p><b>Your Account Number:</b>
+                    {% else %}
+                <p><b>Sender's Account Number:</b>
+                    {% endif %}
+                    {{transaction.from_account.account_no}}</p>
+
+                {% if transaction.to_account.user == user %}
+                <p><b>Your Account Number:</b>
+                    {% else %}
+                <p><b>Beneficiary's Account Number:</b>
+                    {% endif %}
+                    {{transaction.to_account.account_no}}</p>
+
+                {% else %}
+                <p><b>Account Number:</b>
+
+                    {{transaction.from_account.account_no}}
+
+                    {{transaction.to_account.account_no}}
+                </p>
+
+                {% endif %}
+            </div>
+        </div>
+
+        {% endif %}
+    </div>
+</div>
+
+{% endblock content %}

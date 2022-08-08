@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Transferred {% endblock title %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'banking/css/index.css' %}">
+{% endblock stylesheet %}
+
+{% block content %}
+<div class="container">
+
+
+    {% if success_message %}
+
+    <div class="container">
+        <div class="d-flex lead text-success px-4 py-4 my-4 bg-light justify-content-around">
+            {{ success_message }}.
+
+            <a class="btn btn-success" href="{% url 'core:profile' %}">See Recent Transactions</a>
+        </div>
+
+        <div class="d-flex justify-content-center shadow w-75 mx-auto">
+            <div class="profile-content mt-4 mt-sm-0">
+                <div class="title-text mb-3">Transaction Details</div>
+                <p><b>ID:</b> {{transaction.transaction_id}}</p>
+                <p><b>Type:</b>
+                    {% if transaction.transaction_type == 'T' %}
+                    Transferred
+                    {% endif %}
+                </p>
+                <p><b>Amount:</b> {{transaction.amount}}</p>
+                <p><b>time:</b> {{transaction.updated_at}}</p>
+                <p><b>Status:</b>
+                    {% if transaction.status == 'P' %}
+                    <span class="text-warning">Pending</span>
+                    {% elif transaction.status == 'C' %}
+                    <span class="text-success">Success</span>
+                    {% else %}
+                    <span class="text-danger">Failed</span>
+                    {% endif %}
+                </p>
+                <p><b>Your Account Number:</b> {{transaction.from_account.account_no}}</p>
+                <p><b>Your Account Balance:</b> {{transaction.from_account.balance}}</p>
+                <p><b>Beneficiary's Account Number:</b> {{transaction.to_account.account_no}}</p>
+            </div>
+        </div>
+
+    </div>
+
+    {% endif %}
+
+    {% if error_message %}
+    <div class="container">
+        <div class="d-flex lead text-danger px-4 py-4 my-4 bg-light justify-content-around">
+            Ops! {{ error_message }}.
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock content %}

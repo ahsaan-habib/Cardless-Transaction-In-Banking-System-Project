@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Register Account {% endblock title %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'account/css/style.css' %}">
+{% endblock stylesheet %}
+
+
+{% block content %}
+<div class="container">
+  <div class="register-content card col-12 col-lg-6 mx-auto border-0 my-5 py-5 shadow">
+    <form class="form-register w-75 mx-auto" method="post">
+      {% csrf_token %}
+      <h1 class="h3 mb-4 font-weight-normal text-center">Register Account</h1>
+
+      <!-- <div class="form-group d-flex align-items-center">
+        <div class="input-label">
+          <i class="fa fa-envelope "></i>
+        </div>
+        <input type="email" name="email" id="inputEmail" class="form-control form-control-sm rounded-0"
+          placeholder="Email address or phone" required autofocus>
+      </div>
+
+      <div class="form-group">
+        <div class="input-label">
+          <i class="fa fa-lock"></i>
+        </div>
+        <input type="password" name="password1" id="inputPassword1" class="form-control form-control-sm rounded-0"
+          placeholder="Password" required>
+      </div>
+
+      <div class="form-group">
+        <div class="input-label">
+          <i class="fa fa-lock"></i>
+        </div>
+        <input type="password" name="password2" id="inputPassword2" class="form-control form-control-sm rounded-0"
+          placeholder="Confirm password" required>
+      </div> -->
+      {% for field in registration_form %}
+      <div class="form-group">
+        <p class="text-danger">{{ field.errors }}</p>
+        <div class="input-label">
+          <!-- <i class="fa fa-{{ field.icon }}"></i> -->
+          {{ field.label_tag }}
+        </div>
+        {{ field }}
+
+        {% if field.help_text %}
+        <div class="help small text-muted">{{ field.help_text|safe }}</div>
+        {% endif %}
+      </div>
+      {% endfor %}
+
+      {% if registration_form.non_field_errors %}
+      <div class="text-danger">
+        <p>{{registration_form.non_field_errors}}</p>
+      </div>
+
+      {% endif %}
+
+      <button class="btn btn-sm btn-primary btn-block rounded-0" type="submit">Register</button>
+    </form>
+
+    <div class="d-flex flex-column">
+      <p class="text-center">Already have an account? <a href="{% url 'core:login' %}">Log In</a> </p>
+    </div>
+
+  </div>
+</div>
+
+
+{% endblock content %}

@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Login {% endblock title %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'account/css/style.css' %}">
+{% endblock stylesheet %}
+
+{% block content %}
+<div class="container">
+    <div class="login-content card col-12 col-lg-6 mx-auto border-0 my-5 py-5 shadow">
+        <form class="form-login w-75 mx-auto" method="post">
+            {% csrf_token %}
+            <h1 class="h3 mb-4 font-weight-normal text-center">Login</h1>
+
+            <!-- <div class="form-group d-flex align-items-center">
+                <div class="input-label">
+                    <i class="fa fa-envelope"></i>
+                </div>
+                <input type="email" name="email" id="inputEmail" class="form-control form-control-sm rounded-0"
+                    placeholder="Email address" required autofocus>
+            </div>
+            <div class="form-group d-flex align-items-center">
+                <div class="input-label">
+                    <i class="fa fa-lock"></i>
+                </div>
+                <input type="password" name="password" id="inputPassword" class="form-control form-control-sm rounded-0"
+                    placeholder="Password" required>
+            </div> -->
+            {% for field in login_form %}
+            <div class="form-group">
+                <p class="text-danger">{{ field.errors }}</p>
+                <div class="input-label">
+                    <!-- <i class="fa fa-{{ field.icon }}"></i> -->
+                    {{ field.label_tag }}
+                </div>
+                {{ field }}
+
+                {% if field.help_text %}
+                <div class="help small text-muted">{{ field.help_text|safe }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            {% if request.GET.next %}
+            <input type="hidden" name="next" value="{{ request.GET.next }}" />
+            {% endif %}
+
+            {% if login_form.non_field_errors %}
+            <div class="text-danger">
+                <p>{{login_form.non_field_errors}}</p>
+            </div>
+            {% endif %}
+
+            <button class="btn btn-sm btn-primary btn-block rounded-0" type="submit">Log in</button>
+
+        </form>
+
+        <div class="facebook-login w-75 mx-auto">
+            <a class="btn btn-sm btn-primary rounded-0 border-0 d-table mx-auto"
+                href="{#% url 'social:begin' 'facebook' %#}">Login with facebook</a>
+        </div>
+
+        <div class="d-flex justify-content-between w-75 mx-auto ">
+            <a class="" href="{#% url 'password_reset' %#}">Reset password</a>
+            <a class="" href="{% url 'core:register' %}">Register</a>
+        </div>
+    </div>
+</div>
+{% endblock content %}

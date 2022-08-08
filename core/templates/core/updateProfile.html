@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Update Account {% endblock title %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'account/css/style.css' %}">
+{% endblock stylesheet %}
+
+{% block content %}
+<div class="container">
+
+  <div class="login-content card col-12 col-lg-6 mx-auto border-0 my-5 py-5 shadow">
+    <form class="form-update-acoount w-75 mx-auto" method="post">
+      {% csrf_token %}
+
+      <h1 class="h3 mb-3 font-weight-normal text-center">Update Profile Information</h1>
+
+      {% for field in account_form %}
+      <div class="form-group">
+        <div class="input-label">
+          {{ field.label_tag }}
+        </div>
+        {{ field }}
+
+        <div>
+          {% for error in field.errors %}
+          <p class="small text-danger">{{ error }}</p>
+          {% endfor %}
+        </div>
+
+        {% if field.help_text %}
+        <div class="help small text-muted">{{ field.help_text|safe }}</div>
+        {% endif %}
+      </div>
+
+      {% endfor %}
+
+      {% for field in account_form %}
+      <div>
+        {% for error in field.errors %}
+        <p class="text-center small text-danger">{{ error }}</p>
+        {% endfor %}
+      </div>
+      {% endfor %}
+
+      {% if account_form.non_field_errors %}
+      <div>
+        <p class="text-danger">{{account_form.non_field_errors}}</p>
+      </div>
+      {% endif %}
+
+      {% if success_message %}
+      <p class="text-success text-center">{{success_message}}</p>
+      {% endif %}
+
+      <button class="btn btn-sm btn-primary btn-block rounded-0" type="submit">Save changes</button>
+
+
+      <div class="d-flex mt-5 justify-content-between">
+        <a class="text-info" href="{#% url 'password_change' %#}">Change password</a>
+        <a class="text-info" href="{#% url 'logout' %#}">Be An Author to write Blog</a>
+      </div>
+
+    </form>
+
+    {% endblock content %}

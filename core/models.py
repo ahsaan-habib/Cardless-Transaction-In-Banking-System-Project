@@ -5,6 +5,8 @@ from django.core.exceptions import ValidationError
 from django.db import models
 import uuid
 
+from core.custom_auth.usermanager import MyUserManager
+from core.validators import validate_file_size
 
 class User(AbstractBaseUser, PermissionsMixin):
 
@@ -36,10 +38,16 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=64, blank=True)
     last_name = models.CharField(max_length=64, blank=True)
 
+    image = models.ImageField(
+        upload_to='core/images/profile_images/',
+        validators=[validate_file_size],
+        blank=True, null=True)
 
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
+
+    objects = MyUserManager()
 
     def __str__(self):
         if self.username:

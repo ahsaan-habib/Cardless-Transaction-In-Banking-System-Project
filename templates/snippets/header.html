@@ -1,0 +1,83 @@
+{% load static %}
+<nav class="navbar navbar-expand-md top-nav w-100 
+  {% if request.resolver_match.view_name == 'core:index'%}home-nav{% endif %} " id="top-navbar">
+  <a class="navbar-brand d-flex align-items-center" href="{% url 'core:index' %}"><img class="mr-2"
+      src="{% static 'core/images/favicon.png'  %}" alt="logo" width="30px" height="30px"> KS Friends
+    Chemical</a>
+
+
+  <div class="nav-center d-flex align-items-center">
+    <div class="menu-bar position-relative">
+      <div class="sm-screen-nav d-flex d-md-none align-items-center">
+        {% if request.user.is_authenticated %}
+        <div class="cart-icon">
+          <a href="{#% url 'cart:index' %#}">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-count">{% if cart %}{{ cart.count }}{% else %}0{% endif %}</span>
+          </a>
+        </div>
+        {% else %}
+        <div class="nav-item">
+          <a class="btn btn-sm btn-primary px-3 mr-2 rounded-0" href="{% url 'core:login' %}">Login</a>
+        </div>
+        {% endif %}
+
+        <button class="navbar-toggler menu-btn" type="button" data-toggle="collapse" data-target="#main-menu"
+          aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-icon"></span>
+        </button>
+      </div>
+      <div class="collapse navbar-collapse" id="main-menu">
+        <ul class="navbar-nav menu">
+          <li class="nav-item {% if request.resolver_match.view_name == 'core:index'%}active{% endif %}">
+            <a class="nav-link" href="{% url 'core:index' %}">Home</a>
+          </li>
+          <li class="nav-item {% if request.resolver_match.view_name == 'core:index'%}active{% endif %}">
+            <a class="nav-link" href="{% url 'core:index' %}">Store</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'core:index' %}">Posts</a>
+          </li>
+          {% if request.user.is_authenticated %}
+          <li class="nav-item d-block d-md-none">
+            <a class="nav-link" href="{% url 'core:profile' %}">Profile</a>
+          </li>
+          <li class="nav-item d-block d-md-none">
+            <a class="nav-link" href="{% url 'core:logout' %}">Logout</a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-right align-items-center d-none d-md-flex">
+    {% if request.user.is_authenticated %}
+    <div class="cart-icon">
+      <a href="{#% url 'cart:index' %#}">
+        <i class="fas fa-shopping-cart"></i>
+        <span class="cart-count">{% if cart %}{{ cart.count }}{% else %}0{% endif %}</span>
+      </a>
+    </div>
+
+    <div class="account nav-item position-relative">
+      <div class="username d-flex align-items-center lead text-primary">
+        <div class="small mr-1">{{request.user.username}} </div>
+        <i class="fas fa-user-circle"></i>
+      </div>
+      <div class="drop-down-wrapper position-relative">
+        <div class="drop-down">
+          <div class="nav-item"><a class="nav-link" href="{% url 'core:profile' %}">Profile</a></div>
+          <div class="nav-item"><a class="nav-link" href="{% url 'core:logout' %}">Logout</a></div>
+        </div>
+      </div>
+    </div>
+
+    {% else %}
+    <div class="nav-item">
+      <a class="nav-link" href="{% url 'core:login' %}">Login</a>
+    </div>
+    {% endif %}
+  </div>
+
+</nav>

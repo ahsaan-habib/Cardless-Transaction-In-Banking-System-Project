@@ -1,0 +1,88 @@
+{% load bootstrap4 %}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery=True %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        {% block title %}
+        KS Friends Chemical
+        {% endblock %}
+    </title>
+    <link rel="icon" type="image/png" href="{% static 'core/images/favicon.png' %}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <!-- Bootstrap css is End -->
+
+    <!-- Font Awesome css is start -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+
+    <!-- library -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+
+
+    {% block stylesheet %}
+
+    {% endblock %}
+
+
+    <script src="{% static 'core/js/index.js' %}"></script>
+
+</head>
+
+<body>
+    <!-- Header -->
+
+    <header>
+        {% include 'snippets/header.html' %}
+    </header>
+    <!-- End Header -->
+
+    <!-- Body -->
+    <div class="main">
+
+        {% if messages %}
+        <ul class="messages pl-0 my-4">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }} lead" {% endif %}>{{ message }}</li>
+                {% endfor %}
+        </ul>
+        {% endif %}
+
+        {% block content %}
+
+        {% endblock content %}
+    </div>
+    <!-- End Body -->
+
+    <!-- Footer -->
+    <footer>
+        {% include 'snippets/footer.html' %}
+    </footer>
+    <!-- End Footer -->
+
+    <script src="https://unpkg.com/swiper@7/swiper-bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    {% block script %}
+
+    {% endblock %}
+
+
+</body>
+
+</html>

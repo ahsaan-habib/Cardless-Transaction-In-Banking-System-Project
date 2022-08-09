@@ -242,19 +242,27 @@ def make_cash_by_code(request):
 @login_required(login_url='core:login')
 def pending_transaction(request, transaction_id):
     context = {}
-    if request.POST:
-        shared_account_no = request.POST['account_no']
-        print(shared_account_no)
-        pass
+    
     try:
         transaction = Transaction.objects.get(transaction_id=transaction_id)
-        if transaction.from_account.user == request.user:
+        print(( request.user in [ account.user for account in transaction.shared_accounts.all()]))
+        if transaction.from_account.user == request.user or ( request.user in \
+             [ account.user for account in transaction.shared_accounts.all()]):
             if transaction.status == 'F':
                 context['error_message'] = "This Transaction has been Faild."
             elif transaction.status == 'C':
                 context['error_message'] = "This Transaction has been Completed."
             else:
-                pass
+                if request.POST:
+                    shared_account_no = request.POST['account_no']
+                    try:    
+                        account = Account.objects.get(account_no=shared_account_no)
+                        transaction.shared_accounts.add(account)
+                        transaction.save()
+                        pass
+                    except Account.DoesNotExist:
+                        context['account_error_message'] = "Beneficiary Account not found"
+                
             context['transaction'] = transaction
         else:
             context['error_message'] = "You are not allowed to access this Transaction"
@@ -383,4 +391,3 @@ def withdraw(request):
             context['error_message'] = "Please fill all Options"
 
     return render(request, 'banking/withdraw.html', context)
-

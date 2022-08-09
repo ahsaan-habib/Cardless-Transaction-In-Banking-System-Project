@@ -31,6 +31,7 @@ class Account(models.Model):
     # pin_locked_at = models.DateTimeField(null = True)
 
 
+
     def __str__(self):
         return f"{self.user} - {self.account_no}"
 
@@ -63,7 +64,8 @@ class Transaction(models.Model):
     success = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    shared_accounts = models.ManyToManyField(Account, blank=True, related_name='shared_transactions')
 
 
     def __str__(self):
-        return f"{self.from_account} - {self.amount}"
+        return f"{self.transaction_id }- {self.from_account} - {self.amount}"

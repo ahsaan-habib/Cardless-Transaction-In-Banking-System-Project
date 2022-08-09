@@ -46,9 +46,9 @@
     <div class="main">
 
         {% if messages %}
-        <ul class="messages pl-0 my-4">
+        <ul class="messages text-center bg-light pl-0">
             {% for message in messages %}
-            <li{% if message.tags %} class="{{ message.tags }} lead" {% endif %}>{{ message }}</li>
+            <li{% if message.tags %} class="text-{{ message.tags }} py-2 lead" {% endif %}>{{ message }}</li>
                 {% endfor %}
         </ul>
         {% endif %}

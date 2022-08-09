@@ -9,6 +9,19 @@
 
 {% block content %}
 <div class="container">
+
+    {% if account_error_message %}
+
+    <div class="lead text-center text-danger px-4 py-4 my-4 bg-light justify-content-around">
+
+        <p>{{ account_error_message }}</p>
+
+        <a class="btn btn-primary" href="{% url 'banking:activate_account' %}">Activate Account Now</a>
+    </div>
+
+    {% else %}
+
+
     <div class="card col-12 col-lg-6 mx-auto border-0 my-5 py-5 shadow">
 
         <form class="deposite-form w-75 mx-auto" method="post">
@@ -22,7 +35,7 @@
                 <input type="number" name="amount" id="inputAmount" class="form-control rounded-0"
                     placeholder="Amount to Transfer" value="{{amount}}" required>
                 {% if amount_error_message %}
-                <div class="text-danger">
+                <div class="text-danger small">
                     <p>{{amount_error_message}}</p>
                 </div>
                 {% endif %}
@@ -34,9 +47,7 @@
 
     </div>
 
-
-
-
+    {% endif %}
 
 </div>
 {% endblock content %}

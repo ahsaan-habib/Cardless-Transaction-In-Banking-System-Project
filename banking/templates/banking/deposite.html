@@ -32,7 +32,7 @@
                     placeholder="Enter Customer's Account Number" value="{{ account_no }}" required autofocus>
 
                 {% if account_error_message %}
-                <div class="text-danger">
+                <div class="text-danger small">
                     <p>{{account_error_message}}</p>
                 </div>
                 {% endif %}
@@ -44,7 +44,7 @@
                 <input type="number" name="amount" id="inputAmount" class="form-control rounded-0"
                     placeholder="Amount to Deposite" value="{{amount}}" required>
                 {% if amount_error_message %}
-                <div class="text-danger">
+                <div class="text-danger small">
                     <p>{{amount_error_message}}</p>
                 </div>
                 {% endif %}
@@ -62,10 +62,5 @@
 
     </div>
     {% endif %}
-
-
-
-
-
 </div>
 {% endblock content %}

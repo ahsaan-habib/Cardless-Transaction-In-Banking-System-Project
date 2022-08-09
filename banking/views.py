@@ -4,31 +4,61 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 import random
+from django.contrib import messages
 
 from banking.models import Account, Transaction
-
-from .forms import DepositeForm
-
 
 @login_required(login_url='core:login')
 def activate_account(request):
     user = request.user
+    context = {}
     try:
         account = Account.objects.get(user=user)
-        context = {}
+        context['account_info'] = account
+        if account.active:
+            return redirect('core:profile')
         if request.POST:
             pin = request.POST['pin']
             context['pin'] = pin
-            if pin and pin.isdigit() and int(pin) > 10000 and int(pin) < 99999:
-                account.pin = pin
+            if pin and pin.isdigit() and int(pin) > 10000 and int(pin) < 99999 and int(pin) != account.pin:
+                account.pin = int(pin)
                 account.active = True
                 account.save()
+                messages.add_message(request, messages.INFO,
+                                        'Your account has been activated. You can now make any transaction.')
                 return HttpResponseRedirect(reverse('core:profile'))
             else:
                 context['pin_error_message'] = "Invalid pin"
     except Account.DoesNotExist:
         context['error_message'] = "Something went wrong"
     return render(request, 'banking/activate_account.html', context)
+
+
+@login_required(login_url='core:login')
+def change_pin(request):
+    context = {}
+    if request.POST:
+        current_pin = request.POST['current_pin']
+        new_pin = request.POST['new_pin']
+        context['current_pin'] = current_pin
+        context['new_pin'] = new_pin
+        if current_pin and new_pin:
+            if current_pin.isdigit() and int(current_pin) > 10000 and int(current_pin) < 99999 \
+and new_pin.isdigit() and int(new_pin) > 10000 and int(new_pin) < 99999 and new_pin != current_pin:
+                account = Account.objects.get(user=request.user)
+                if account.pin == int(current_pin):
+                    account.pin = new_pin
+                    account.save()
+                    messages.add_message(request, messages.INFO, 'Pin changed successfully')
+                    return HttpResponseRedirect(reverse('core:profile'))
+                else:
+                    context['pin_error_message'] = "Invalid Current pin"
+            else:   
+                context['pin2_error_message'] = "Invalid pin"
+        else:
+            context['pin2_error_message'] = "Please fill all fields"
+
+    return render(request, 'banking/change_pin.html', context)
 
 
 @login_required(login_url='core:login')
@@ -43,7 +73,7 @@ def deposite(request):
             context['account_no'] = account_no
             if amount and account_no:
                 if amount.isdigit() and int(amount) > 0 and int(amount) < 999999999:
-                    account = Account.objects.filter(account_no=account_no).first()
+                    account = Account.objects.filter(account_no=int(account_no)).first()
                     if account:
 
                         with transaction.atomic():
@@ -56,6 +86,8 @@ def deposite(request):
                                 success=True
                             )
                             account.save()
+                            messages.add_message(request, messages.INFO,
+                                                    'Deposited successfully')
                         return HttpResponseRedirect(reverse('banking:deposited',  kwargs={'account_no': account_no}) )
                     else:
                         context['account_error_message'] = "Account not found"
@@ -94,7 +126,7 @@ def transfer(request):
         context['account_no'] = to_account_no
         if amount and to_account_no:
             if amount.isdigit() and int(amount) > 0 and int(amount) < 999999999:
-                to_account = Account.objects.filter(account_no=to_account_no).first()
+                to_account = Account.objects.filter(account_no=int(to_account_no)).first()
                 if to_account:
                     from_account = Account.objects.get(user=user)
                     if to_account != from_account:
@@ -112,9 +144,12 @@ def transfer(request):
                                     status="C",
                                     success=True
                                 )
-                                
+                                messages.add_message(request, messages.INFO,
+                                                        'Amount transferred successfully')
+                                   
                                 return HttpResponseRedirect(reverse('banking:transferred',
                                 kwargs={'transaction_id': created_transaction.transaction_id}) )
+                                
                         else:
                             context['amount_error_message'] = "Insufficient balance"
                     else:
@@ -162,33 +197,43 @@ def atm(request):
 def make_cash_by_code(request):
     user = request.user
     context = {}
-    if request.POST:
-        amount = request.POST['amount']
-        context['amount'] = amount
-        print(amount)
-        if amount and amount.isdigit() and int(amount) > 0 and int(amount) < 999999999:
-            try:
-                account = Account.objects.get(user=user)
-                if account.balance >= int(amount):
-                    with transaction.atomic():
-                        account.balance -= int(amount)
-                        account.save()
-                        created_transaction = Transaction.objects.create(
-                            from_account=account,
-                            amount=int(amount),
-                            transaction_type='T',
-                            status="P",
-                            pin =random.randint(00000000, 99999999),
-                            success=False
-                        )
-                    return HttpResponseRedirect(reverse('banking:pending_transaction',
-                                kwargs={'transaction_id': created_transaction.transaction_id}) )
-                else:
-                    context['amount_error_message'] = "Insufficient balance"
-            except Account.DoesNotExist:
-                context['amount_error_message'] = "Account not found, Something went wrong, please Contact Admin"
-        else:
-            context['amount_error_message'] = "Invalid amount"
+    account = Account.objects.get(user=user)
+    if account.active:
+        if request.POST:
+            amount = request.POST['amount']
+            context['amount'] = amount
+            print(amount)
+            if amount and amount.isdigit() and int(amount) > 0 and int(amount) < 999999999 and int(amount) % 500 == 0:
+                try:
+                    if account.balance >= int(amount):
+                        with transaction.atomic():
+                            account.balance -= int(amount)
+                            account.save()
+                            created_transaction = Transaction.objects.create(
+                                from_account=account,
+                                amount=int(amount),
+                                transaction_type='T',
+                                status="P",
+                                pin =random.randint(00000000, 99999999),
+                                success=False
+                            )
+                            messages.add_message(request, messages.INFO, 
+                                    'Generating PIN code for cash withdrawal is success. Please manage transaction PIN carefully')
+                                
+
+                        return HttpResponseRedirect(reverse('banking:pending_transaction',
+                                    kwargs={'transaction_id': created_transaction.transaction_id}) )
+                    else:
+                        context['amount_error_message'] = "Insufficient balance"
+                    
+                except Account.DoesNotExist:
+                    context['amount_error_message'] = "Account not found, Something went wrong, please Contact Admin"
+            else:
+                context['amount_error_message'] = "Amount must be multiple of 500 and in range between 500 to 10000000"
+
+    else:
+        context['account_error_message'] = "Account is not active, you must activate your \
+                account to make cash by code or withdraw"
 
 
     return render(request, 'banking/make_cash_by_code.html', context)
@@ -217,36 +262,52 @@ def pending_transaction(request, transaction_id):
 
 
 
-def widthdraw(request):
+def withdraw(request):
     context = {}
     if request.POST:
         account_no = request.POST['account_no']
+        pin = request.POST['pin']
         amount = request.POST['amount']
         context['account_no'] = account_no
-        context['amount'] = amount
-        if amount and account_no:
-            if amount.isdigit() and int(amount) > 0 and int(amount) < 999999999:
-                account = Account.objects.filter(account_no=account_no).first()
-                if account:
-                    with transaction.atomic():
-                        account.balance += int(amount)
-                        Transaction.objects.create(
-                            to_account=account,
-                            amount=int(amount),
-                            transaction_type='D',
-                            status="C",
-                            success=True
-                        )
-                        account.save()
-                    return HttpResponseRedirect(reverse('banking:deposited',  kwargs={'account_no': account_no}) )
+        context['amount'] = amount 
+        context['pin'] = pin 
+        if amount and account_no and pin:
+            # amount must be divided by 500 to get the number of notes
+            if amount.isdigit() and int(amount) > 0 and int(amount) < 999999999 and int(amount) % 500 == 0:
+            
+                if pin.isdigit() and int(pin) > 10000 and int(pin) < 99999:
+                    try:
+                        account = Account.objects.get(account_no=int(account_no))
+                        if account.active:
+                            if account.balance >= int(amount):
+                                if account.pin == int(pin):
+                                    with transaction.atomic():
+                                        account.balance -= int(amount)
+                                        Transaction.objects.create(
+                                            from_account=account,
+                                            amount=int(amount),
+                                            transaction_type='W',
+                                            status="C",
+                                            success=True
+                                        )
+                                        account.save()
+                                        messages.add_message(request, messages.INFO, 
+                                        'Withdrawal Successful, Thanks for using our services')
+                                    return HttpResponseRedirect(reverse('banking:atm') )
+                                else:
+                                    context['error_message'] = "Invalid pin"
+                            else:
+                                context['error_message'] = "Insufficient balance"
+                        else:
+                            context['error_message'] = "Account is not active"
+                    except Account.DoesNotExist:
+                        context['error_message'] = "Account not found"
                 else:
-                    context['account_error_message'] = "Account not found"
+                    context['error_message'] = "Invalid pin"
             else:
-                context['amount_error_message'] = "Invalid amount"
+                context['error_message'] = "Amount must be multiple of 500 and in range between 500 to 10000000"
         else:
-            context['form_error_message'] = "Please fill all fields"
-    else:
-        context["unauthorized"] = "you are not allwoed to access this page"
+            context['error_message'] = "Please fill all Options"
 
-    return render(request, 'banking/widthdraw.html', context)
+    return render(request, 'banking/withdraw.html', context)
 

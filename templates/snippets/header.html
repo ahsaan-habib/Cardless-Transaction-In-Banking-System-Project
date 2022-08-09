@@ -7,7 +7,7 @@
 
   {% if request.user.is_authenticated and not request.user.account.active %}
   <li class="nav-item d-block d-md-none">
-    <a class="glow-link" href="">Activate Account</a>
+    <a class="glow-link" href="{% url 'banking:activate_account' %}">Activate Account</a>
   </li>
   {% endif %}
 
@@ -51,7 +51,7 @@
 
   {% if request.user.is_authenticated and not request.user.account.active %}
   <li class="nav-item d-none d-md-block">
-    <a class="glow-link" href="">Activate Account</a>
+    <a class="glow-link" href="{% url 'banking:activate_account' %}">Activate Account</a>
   </li>
   {% endif %}
 

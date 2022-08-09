@@ -90,8 +90,16 @@
             <div class="card shadow border-0  mx-auto">
                 <h2 class="font-weight-normal py-2 card-header text-center">Account Details</h2>
                 <div class="profile-content p-4 ">
-                    <p><b>Account Number:</b> {{account_info.account_no}}</p>
-                    <p><b>Current Balance:</b> {{account_info.balance}}</p>
+                    <div class="d-flex justify-content-between">
+                        <div class="info">
+                            <p><b>Account Number:</b> {{account_info.account_no}}</p>
+                            <p><b>Current Balance:</b> {{account_info.balance}}</p>
+                        </div>
+                        <a class="btn btn-primary rounded-0 btn-sm px-5 my-4"
+                            href="{% url 'banking:change_pin' %}">Change
+                            Pin</a>
+                    </div>
+
 
                     <h4 class="font-weight-normal">Recent Transcations:</h4>
                     <table class="table table-striped table-hover transaction-table">

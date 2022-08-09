@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Activate Account {% endblock title %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'banking/css/index.css' %}">
+{% endblock stylesheet %}
+
+{% block content %}
+<div class="container">
+
+    {% if error_message %}
+
+    <div class="d-flex lead text-success px-4 py-4 my-4 bg-light justify-content-around">
+
+        <p>{{ error_message }}</p>
+
+    </div>
+
+    {% else %}
+    <form class="deposite-form w-75 mx-auto" method="post">
+        {% csrf_token %}
+        <h1 class="h3 my-4 font-weight-normal text-center">Activate Account</h1>
+
+        <div class="row align-items-center mb-0">
+            <input type="number" name="pin" id="inputPin" class="col-8 form-control rounded-0"
+                placeholder="Enter New PIN to activate Account" value="{{pin}}" required>
+            <button class="col-4 btn btn-primary btn-block rounded-0" type="submit">Activate
+                Account</button>
+        </div>
+        {% if pin_error_message %}
+        <div class="text-danger small">
+            <span>{{pin_error_message }}</span>
+        </div>
+        {% endif %}
+        <div class="text-primary small">
+            <span>Please enter your new pin to activate your account. Pin Must be in 5 digits not serial number.</span>
+        </div>
+
+
+    </form>
+
+    {% endif %}
+</div>
+{% endblock content %}

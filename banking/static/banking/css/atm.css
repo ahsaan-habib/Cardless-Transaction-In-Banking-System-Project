@@ -1,0 +1,56 @@
+input[type="number"],
+select {
+  width: 100%;
+  height: 80px;
+  font-size: 40px;
+  padding: 12px 20px 16px 20px;
+  margin: 24px 0;
+  border-radius: 40px !important;
+  display: block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+input[type="number"]::placeholder {
+  font-size: 40px;
+  font-weight: 400;
+  color: rgb(155, 157, 255);
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.atm-btn {
+  width: 100%;
+  background-color: #001aff;
+  color: white;
+  min-height: 80px;
+  font-size: 40px;
+  padding: 0px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 40px;
+  cursor: pointer;
+}
+
+input[type="submit"]:hover {
+  background-color: #45a049;
+}
+
+/* .shadow {
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
+    rgba(0, 0, 0, 0.3) 0px 30px 60px -30px !important;
+} */
+
+.shadow {
+  box-shadow: rgb(16 0 255 / 10%) 0px 40px 80px -18px,
+    rgb(27 0 255 / 30%) 0px 25px 50px -24px,
+    rgb(147 147 147 / 35%) 0px -2px 6px 0px inset !important;
+}

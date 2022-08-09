@@ -58,7 +58,7 @@ class Transaction(models.Model):
     from_account = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True, blank=True, related_name='sender')
     to_account = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True, blank=True, related_name='reciever')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    pin = models.CharField(max_length=8, blank=True, null=True)
+    pin = models.PositiveIntegerField(validators=[MinValueValidator(10000000), MaxValueValidator(99999999)], blank=True, null=True)
     status = models.CharField(max_length=1, choices=transaction_status_choices, default='P')
     success = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)

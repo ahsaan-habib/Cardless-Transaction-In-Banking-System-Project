@@ -255,10 +255,83 @@ def pending_transaction(request, transaction_id):
                 context['error_message'] = "This Transaction has been Completed."
             else:
                 pass
-        context['transaction'] = transaction
+            context['transaction'] = transaction
+        else:
+            context['error_message'] = "You are not allowed to access this Transaction"
     except Transaction.DoesNotExist:
         context['error_message'] = "Transaction not found"
     return render(request, 'banking/pending_transaction.html', context)
+
+
+
+def cash_by_code(request):
+    context = {}
+    if request.POST:
+        transaction_id = request.POST['transaction_id']
+        pin = request.POST['pin']
+        amount = request.POST['amount']
+        context['transaction_id'] = transaction_id
+        context['pin'] = pin
+        context['amount'] = amount  
+        if transaction_id and pin and amount:
+            try:
+                trnx = Transaction.objects.get(transaction_id=transaction_id)
+                print(int(trnx.pin) == int(pin))
+                if trnx.pin == int(pin) and trnx.status == 'P'\
+                     and int(str(trnx.amount).split('.')[0]) == int(amount):
+                  
+                    with transaction.atomic():
+                        trnx.status = 'C'
+                        trnx.transaction_type = 'W'
+                        trnx.success = True
+                        trnx.save()
+                        messages.add_message(request, messages.INFO,'Amount Withdrawn successfully')
+                        return HttpResponseRedirect(reverse('banking:atm'))
+                        
+                else:
+                    context['error_message'] = "Not Valid Combination To Withdraw Via Cash By Code"
+
+            except Transaction.DoesNotExist:
+                context['error_message'] = "Not Valid Combination To Withdraw Via Cash By Code"
+        else:
+            context['error_message'] = "Please fill all Options"
+        
+    return render(request, 'banking/cash_by_code.html', context)
+
+
+@login_required(login_url='core:login')
+def revert_cash_by_code(request, transaction_id):
+    context = {}
+    user = request.user
+    try:
+        trnx = Transaction.objects.get(transaction_id=transaction_id)
+        account = Account.objects.get(user=user)
+        if trnx.from_account == account:
+            if trnx.status == 'F':
+                context['error_message'] = "This Transaction has been Faild already."
+            elif trnx.status == 'C':
+                context['error_message'] = "This Transaction has been Completed already."
+            else:
+                with transaction.atomic():
+                    trnx.status = 'F'
+                    trnx.transaction_type = 'W'
+                    trnx.success = False
+                    trnx.save()
+                    account.balance += trnx.amount
+                    account.save()
+
+                    messages.add_message(request, messages.INFO,'Amount Reverted successfully')
+                    return HttpResponseRedirect(reverse('banking:transaction_details',
+                                kwargs={'transaction_id': trnx.transaction_id}) )
+                                
+            context['transaction'] = transaction
+        else:
+            context['error_message'] = "You are not allowed to access this Transaction"
+    except Transaction.DoesNotExist:
+        context['error_message'] = "Transaction not found"
+    return render(request, 'banking/revert_cash_by_code.html', context)
+
+
 
 
 

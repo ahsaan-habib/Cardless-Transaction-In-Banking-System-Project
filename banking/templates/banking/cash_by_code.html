@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Cash By Code {% endblock title %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'banking/css/index.css' %}">
+<link href="{% static 'banking/css/atm.css' %}" rel="stylesheet" type="text/css">
+{% endblock stylesheet %}
+
+{% block content %}
+<div class="container">
+
+    <div class="card col-12 col-lg-9 mx-auto border-0 my-3 shadow">
+
+        <form class="form w-75 mx-auto pb-3" method="post">
+            {% csrf_token %}
+
+            <div class="atm-form-group">
+                <input type="number" name="transaction_id" id="transaction-id" class="atm-form-control rounded-0"
+                    placeholder="Enter Transaction ID" value="{{ transaction_id }}" required autofocus>
+
+            </div>
+            <div class="atm-form-group">
+                <input type="number" name="pin" id="inputPin" class="atm-form-control rounded-0"
+                    placeholder="Enter Transaction PIN" value="{{pin}}" required>
+
+            </div>
+
+            <div class="atm-form-group">
+                <input type="number" name="amount" id="inputAmount" class="atm-form-control rounded-0"
+                    placeholder="Verify Amount of Cash" value="{{amount}}" required>
+
+            </div>
+            {% if error_message %}
+            <div class="my-2">
+                <div class="title-text text-center text-danger px-4 py-4 my-4 bg-light">
+                    {{ error_message }}
+                </div>
+            </div>
+            {% endif %}
+
+            <button class="atm-btn" type="submit">Get Cash With Code</button>
+
+        </form>
+
+    </div>
+
+</div>
+{% endblock content %}

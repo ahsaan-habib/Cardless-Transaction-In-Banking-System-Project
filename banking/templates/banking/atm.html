@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block stylesheet %}
+<link href="{% static 'core/css/home.css' %}" rel="stylesheet" type="text/css">
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="Heading my-4 text-center">
+        <h2 class="home-welcome">
+            Welcome to ATM Service
+        </h2>
+    </div>
+
+    <div class="home-content">
+
+        <div class="row my-4">
+            <div class="col-6">
+                <div class="card large-btn-shadow-2 border-0">
+                    <a class="home-tab text-center text-primary" href="">
+                        <div class="card-body d-flex justify-content-center">
+                            Cash by Code
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-6">
+                <div class="card large-btn-shadow-2 border-0">
+                    <a class="home-tab text-center text-primary" href="">
+                        <div class="card-body d-flex justify-content-center">
+                            Withdraw Money
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex lead text-primary px-4 py-4 my-4 bg-light justify-content-around">
+        <ul>
+            <li>To get Cash By Code You need to insert Code you generated from your account.</li>
+            <li>If you are a Beneficiary then the code must need from Sender</li>
+            <li>Money Withdraw is a Normal Procedure of ATM</li>
+        </ul>
+    </div>
+
+</div>
+
+
+{% endblock %}

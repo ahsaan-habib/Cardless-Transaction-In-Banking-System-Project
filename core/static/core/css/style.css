@@ -38,6 +38,43 @@ a:hover {
   line-height: 1.2;
 }
 
+@keyframes glow {
+  0% {
+    color: violet;
+  }
+  5% {
+    color: indigo;
+  }
+  10% {
+    color: blue;
+  }
+  15% {
+    color: green;
+  }
+  20% {
+    color: yellow;
+  }
+  25% {
+    color: orange;
+  }
+  30% {
+    color: rgb(0, 0, 0);
+  }
+  35% {
+    color: rgb(255, 212, 188);
+  }
+  40% {
+    color: rgb(255, 0, 0);
+  }
+  100% {
+    color: rgb(255, 0, 0);
+  }
+}
+
+.glow-link {
+  animation: glow 3s ease infinite;
+}
+
 .container-shadow {
   box-shadow: 0 20px 27px 0 rgb(0 0 0 / 5%);
   border-radius: 1rem;

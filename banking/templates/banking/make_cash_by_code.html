@@ -13,21 +13,8 @@
 
         <form class="deposite-form w-75 mx-auto" method="post">
             {% csrf_token %}
-            <h1 class="h3 mb-4 font-weight-normal text-center">Fund Transfer</h1>
+            <h1 class="h3 mb-4 font-weight-normal text-center">Cash By Code Transfer</h1>
 
-            <div class="form-group">
-                <div class="input-label">
-                    To Account Number
-                </div>
-                <input type="number" name="account_no" id="inputAccountNo" class="form-control rounded-0"
-                    placeholder="Enter Beneficiary's Account Number" value="{{ account_no }}" required autofocus>
-
-                {% if account_error_message %}
-                <div class="text-danger">
-                    <p>{{account_error_message}}</p>
-                </div>
-                {% endif %}
-            </div>
             <div class="form-group">
                 <div class="input-label">
                     Amount
@@ -41,13 +28,7 @@
                 {% endif %}
             </div>
 
-            {% if form_error_message %}
-            <div class="text-danger">
-                <p>{{form_error_message}}</p>
-            </div>
-            {% endif %}
-
-            <button class="btn btn-sm btn-primary btn-block rounded-0 my-4" type="submit">Transfer Fund</button>
+            <button class="btn btn-sm btn-primary btn-block rounded-0 my-4" type="submit">Make Transaction</button>
 
         </form>
 

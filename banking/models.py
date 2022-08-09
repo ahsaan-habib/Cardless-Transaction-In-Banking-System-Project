@@ -1,4 +1,5 @@
 import uuid
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.conf import settings
 
 from django.db.models.signals import post_save
@@ -18,12 +19,17 @@ def generate_trnx():
 
 
 class Account(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='account')
     account_no = models.CharField(default=generate_pk, primary_key=True, max_length=16, unique=True)
     balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+    pin = models.PositiveIntegerField(default=12345, validators=[MinValueValidator(10000), MaxValueValidator(99999)])
+    active = models.BooleanField(default=False)
+    # pin_attempts = models.IntegerField(default = 0)
+    # pin_locked = models.BooleanField(default = False)
+    # pin_locked_at = models.DateTimeField(null = True)
+
 
     def __str__(self):
         return f"{self.user} - {self.account_no}"

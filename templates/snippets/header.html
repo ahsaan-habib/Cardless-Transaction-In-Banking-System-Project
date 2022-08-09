@@ -5,6 +5,12 @@
       src="{% static 'core/images/favicon.png'  %}" alt="logo" width="100px" height="auto">Banking System</a>
 
 
+  {% if request.user.is_authenticated and not request.user.account.active %}
+  <li class="nav-item d-block d-md-none">
+    <a class="glow-link" href="">Activate Account</a>
+  </li>
+  {% endif %}
+
   <div class="nav-center d-flex align-items-center">
     <div class="menu-bar position-relative">
       <div class="sm-screen-nav d-flex d-md-none align-items-center">
@@ -25,10 +31,11 @@
           <li class="nav-item {% if request.resolver_match.view_name == 'core:index'%}active{% endif %}">
             <a class="nav-link" href="{% url 'core:index' %}">Home</a>
           </li>
-          <li class="nav-item {% if request.resolver_match.view_name == 'core:index'%}active{% endif %}">
-            <a class="nav-link" href="{% url 'core:index' %}">ATM</a>
+          <li class="nav-item {% if request.resolver_match.view_name == 'banking:atm'%}active{% endif %}">
+            <a class="nav-link" href="{% url 'banking:atm' %}">ATM</a>
           </li>
           {% if request.user.is_authenticated %}
+
           <li class="nav-item d-block d-md-none">
             <a class="nav-link" href="{% url 'core:profile' %}">Profile</a>
           </li>
@@ -41,10 +48,17 @@
     </div>
   </div>
 
+
+  {% if request.user.is_authenticated and not request.user.account.active %}
+  <li class="nav-item d-none d-md-block">
+    <a class="glow-link" href="">Activate Account</a>
+  </li>
+  {% endif %}
+
   <div class="nav-right align-items-center d-none d-md-flex">
     {% if request.user.is_authenticated %}
 
-    <div class="account nav-item position-relative">
+    <div class="account nav-item position-relative ">
       <div class="username d-flex align-items-center lead text-white btn btn-primary">
         <div class="mr-1">Account</div>
         <i class="fas fa-user-circle"></i>

@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Transferred {% endblock title %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'banking/css/index.css' %}">
+{% endblock stylesheet %}
+
+{% block content %}
+<div class="container">
+
+    {% if error_message %}
+
+    <div class="d-flex lead text-success px-4 py-4 my-4 bg-light justify-content-around">
+
+        <p>{{ error_message }}</p>
+
+        {% if transaction %}
+        <a href="{% url 'banking:transaction_details' transaction.transaction_id %}">
+            See Details
+        </a>
+        {% endif %}
+    </div>
+
+    {% else %}
+
+
+
+    <div class="lead text-center text-success px-4 py-4 my-4 bg-light justify-content-around">
+        <p class="text-dark w-75 mx-auto">
+
+            Withdraw The money from nearest ATM using Cash By Code Option or
+            Share The Transaction Id & PIN Code to any Beneficiary.
+        </p>
+        <p class="bg-white d-table mx-auto p-2 mb-0">
+            <span>Transaction Id: <span class="text-primary">{{transaction.transaction_id}}</span> </span>
+            <span> Pin Code: <span class="text-primary">{{transaction.pin}}</span> </span>
+        </p>
+    </div>
+
+
+    <div class="card mx-auto border-0 my-4 py-4 shadow">
+
+        <form class="transaction-form w-75 mx-auto" method="POST">
+            {% csrf_token %}
+            <div class="form-group mb-0">
+                <div class="row align-items-center">
+
+                    <input type="number" name="account_no" id="inputAccountNo" class="form-control col-8 rounded-0"
+                        placeholder="Enter Beneficiary's Account Number" value="{{ account_no }}" required>
+
+                    <button type="submit" class="btn btn-primary col-4 rounded-0">Share To Transfer fund</button>
+                </div>
+                {% if account_error_message %}
+                <div class="text-danger">
+                    <p>{{account_error_message}}</p>
+                </div>
+                {% endif %}
+            </div>
+
+        </form>
+    </div>
+
+    <div class="lead text-center text-danger px-4 py-4 my-4 bg-light justify-content-around">
+
+        <p><b>NB:</b> Please complete the Transaction within 24 hours after it is made.
+            Otherwise It will revert back to your account after 24 hours.</p>
+        <div class="d-flex justify-content-around">
+            <a class="btn btn-success" href="{% url 'core:profile' %}">See Recent Transactions</a>
+            <a class="btn btn-danger" href="{% url 'core:profile' %}">Revert Transaction Now</a>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center shadow w-75 mx-auto mb-5">
+        <div class="profile-content mt-4 mt-sm-0">
+            <div class="title-text mb-3">Transaction Details</div>
+            <p><b>ID:</b> {{transaction.transaction_id}}</p>
+            <p><b>Type:</b>
+                {% if transaction.transaction_type == 'T' %}
+                Transferred
+                {% endif %}
+            </p>
+            <p><b>Amount:</b> {{transaction.amount}}</p>
+            <p><b>time:</b> {{transaction.updated_at}}</p>
+            <p><b>Status:</b>
+                {% if transaction.status == 'P' %}
+                <span class="text-warning">Pending</span>
+                {% elif transaction.status == 'C' %}
+                <span class="text-success">Success</span>
+                {% else %}
+                <span class="text-danger">Failed</span>
+                {% endif %}
+            </p>
+            <p><b>Your Account Number:</b> {{transaction.from_account.account_no}}</p>
+            <p><b>Your Current Balance:</b> {{transaction.from_account.balance}}</p>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock content %}

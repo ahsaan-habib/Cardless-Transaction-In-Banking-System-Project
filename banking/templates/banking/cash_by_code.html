@@ -28,8 +28,9 @@
             </div>
 
             <div class="atm-form-group">
-                <input type="number" name="amount" id="inputAmount" class="atm-form-control rounded-0"
+                <input type="number" name="amount" id="inputAmount" class="atm-form-control rounded-0 mb-0"
                     placeholder="Verify Amount of Cash" value="{{amount}}" required>
+                <div class="ml-5 mb-3 small text-primary">Enter amount without decimal point</div>
 
             </div>
             {% if error_message %}

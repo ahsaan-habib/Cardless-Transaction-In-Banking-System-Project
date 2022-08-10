@@ -14,6 +14,7 @@ urlpatterns = [
     path('atm', views.atm, name='atm'),
     path('make_cash-by-code', views.make_cash_by_code, name='make_cash_by_code'),
     path('pending-transactions/<int:transaction_id>', views.pending_transaction , name='pending_transaction'),
+    path('shared-transactions', views.shared_transactions, name='shared_transactions'),
     path('withdraw', views.withdraw, name='withdraw'),
     path('cash-by-code', views.cash_by_code, name='cash_by_code'),
     path('revert-cash-by-code/<int:transaction_id>', views.revert_cash_by_code, name='revert_cash_by_code'),

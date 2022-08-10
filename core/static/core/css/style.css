@@ -38,6 +38,18 @@ a:hover {
   line-height: 1.2;
 }
 
+.notification-link .badge {
+  position: relative;
+  left: -16px;
+  top: -5px;
+  background: #ff0000;
+  color: #fff;
+  border-radius: 12px;
+}
+.notification-link svg {
+  color: #0029ea;
+}
+
 @keyframes glow {
   0% {
     color: violet;

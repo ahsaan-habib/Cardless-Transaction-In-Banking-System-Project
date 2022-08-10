@@ -92,7 +92,8 @@ def deposite(request):
                     else:
                         context['account_error_message'] = "Account not found"
                 else:
-                    context['amount_error_message'] = "Invalid amount"
+                    context['amount_error_message'] = "Invalid amount, please enter amount \
+                         between 1 and 999999999 without decimal point formate"
             else:
                 context['form_error_message'] = "Please fill all fields"
     else:
@@ -157,7 +158,8 @@ def transfer(request):
                 else:
                     context['account_error_message'] = "Account not found"
             else:
-                context['amount_error_message'] = "Invalid amount"
+                context['amount_error_message'] = "Invalid amount, please enter amount \
+                         between 1 and 999999999 without decimal point formate"
         else:
             context['form_error_message'] = "Please fill all fields"
     return render(request, 'banking/transfer.html', context)
@@ -229,7 +231,8 @@ def make_cash_by_code(request):
                 except Account.DoesNotExist:
                     context['amount_error_message'] = "Account not found, Something went wrong, please Contact Admin"
             else:
-                context['amount_error_message'] = "Amount must be multiple of 500 and in range between 500 to 10000000"
+                context['amount_error_message'] = "Amount must be multiple of 500 and in range between\
+                     500 to 10000000 without decimal point formate"
 
     else:
         context['account_error_message'] = "Account is not active, you must activate your \
@@ -245,7 +248,6 @@ def pending_transaction(request, transaction_id):
     
     try:
         transaction = Transaction.objects.get(transaction_id=transaction_id)
-        print(( request.user in [ account.user for account in transaction.shared_accounts.all()]))
         if transaction.from_account.user == request.user or ( request.user in \
              [ account.user for account in transaction.shared_accounts.all()]):
             if transaction.status == 'F':
@@ -264,11 +266,24 @@ def pending_transaction(request, transaction_id):
                         context['account_error_message'] = "Beneficiary Account not found"
                 
             context['transaction'] = transaction
+            context['shared_accounts'] = transaction.shared_accounts.all()
         else:
             context['error_message'] = "You are not allowed to access this Transaction"
     except Transaction.DoesNotExist:
         context['error_message'] = "Transaction not found"
     return render(request, 'banking/pending_transaction.html', context)
+
+
+@login_required(login_url='core:login')
+def shared_transactions(request):
+    user = request.user
+    context = {}
+    transactions = Transaction.objects.filter(shared_accounts__user=user, status='P')
+    if transactions.__len__() > 0:
+        context['transactions'] = transactions
+    else:
+        context['error_message'] = "No Shared transactions"
+    return render(request, 'banking/shared_transactions.html', context)
 
 
 

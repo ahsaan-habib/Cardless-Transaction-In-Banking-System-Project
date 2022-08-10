@@ -58,6 +58,9 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'libraries': {
+                'core_tags': 'core.templatetags.shared_transaction_tags',
+            },
         },
     },
 ]

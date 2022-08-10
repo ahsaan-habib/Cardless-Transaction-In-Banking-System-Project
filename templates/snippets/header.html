@@ -1,4 +1,6 @@
 {% load static %}
+{% load shared_transactions from shared_transaction_tags %}
+
 <nav class="navbar navbar-expand-md top-nav w-100 
   {% if request.resolver_match.view_name == 'core:index'%}home-nav{% endif %} " id="top-navbar">
   <a class="navbar-brand d-flex align-items-center" href="{% url 'core:index' %}"><img class="mr-2"
@@ -54,6 +56,24 @@
     <a class="glow-link" href="{% url 'banking:activate_account' %}">Activate Account</a>
   </li>
   {% endif %}
+
+  {% if request.user.is_authenticated and request.user|shared_transactions != 0 %}
+  <div class="notification">
+    <a class="notification-link p-3" href="{% url 'banking:shared_transactions' %}">
+      <svg xmlns="" viewBox="0 0 24 24" data-supported-dps="24x24" fill="currentColor" class="mercado-match" width="24"
+        height="24" focusable="false">
+        <path
+          d="M22 19h-8.28a2 2 0 11-3.44 0H2v-1a4.52 4.52 0 011.17-2.83l1-1.17h15.7l1 1.17A4.42 4.42 0 0122 18zM18.21 7.44A6.27 6.27 0 0012 2a6.27 6.27 0 00-6.21 5.44L5 13h14z">
+        </path>
+      </svg>
+      <p class="badge">
+        {{request.user|shared_transactions}}
+      </p>
+    </a>
+  </div>
+  {% endif %}
+
+
 
   <div class="nav-right align-items-center d-none d-md-flex">
     {% if request.user.is_authenticated %}

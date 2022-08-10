@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load amount_without_decimal from shared_transaction_tags %}
+
+{% block title %} Shared Transactions {% endblock title %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'banking/css/index.css' %}">
+{% endblock stylesheet %}
+
+{% block content %}
+<div class="container">
+
+    {% if error_message %}
+
+    <div class="lead text-danger text-center px-4 py-4 my-4 bg-light justify-content-around">
+
+        <p>{{ error_message }}</p>
+
+        <a class="btn btn-primary rounded-0" href="{% url 'core:profile' %}">
+            back to your Profile
+        </a>
+    </div>
+
+    {% else %}
+
+    <div class="lead text-center text-success w-75 mx-auto px-4 py-4 my-4 bg-light justify-content-around">
+        <p><b>NB:</b> Please complete the Transaction within 24 hours after it is created.
+            Otherwise It will revert back to the owner account after 24 hours.
+        </p>
+    </div>
+
+    <div class="title-text text-center">Shared Transactions</div>
+    <hr>
+    <div class="row">
+        {% for transaction in transactions %}
+        <div class="col-md-6 col-xl-4">
+            <card class="card card-shadow border-0 m-4 p-4">
+                <div class="card-text">
+                    <p>From Info: <span class="text-primary">
+                            {% if transaction.from_account.user.first_name %}
+                            {{transaction.from_account.user.first_name}} {{transaction.from_account.user.last_name}}
+                            {% elif transaction.from_account.user.email %}
+                            {{transaction.from_account.user.email}}
+                            {% else %}
+                            {{transaction.from_account.user.phone}}
+                            {% endif %}
+                        </span>
+                    </p>
+                    <p>Id: <span class="text-primary">{{transaction.transaction_id}}</span></p>
+                    <p>PIN: <span class="text-primary">{{transaction.pin}}</span></p>
+                    <p>Amount: <span class="text-primary">{{transaction.amount|amount_without_decimal }}</span></p>
+                    <p>Created at: <span class="">{{transaction.created_at}}</span></p>
+                </div>
+            </card>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% endif %}
+</div>
+
+{% endblock %}

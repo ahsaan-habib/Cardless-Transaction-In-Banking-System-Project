@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load amount_without_decimal from shared_transaction_tags %}
 
 {% block title %} Transferred {% endblock title %}
 
@@ -12,12 +13,12 @@
 
     {% if error_message %}
 
-    <div class="d-flex lead text-success px-4 py-4 my-4 bg-light justify-content-around">
+    <div class="d-flex lead text-danger px-4 py-4 my-4 bg-light justify-content-around">
 
         <p>{{ error_message }}</p>
 
         {% if transaction %}
-        <a href="{% url 'banking:transaction_details' transaction.transaction_id %}">
+        <a class="btn btn-primary rounded-0" href="{% url 'banking:transaction_details' transaction.transaction_id %}">
             See Details
         </a>
         {% endif %}
@@ -36,6 +37,7 @@
         <p class="bg-white d-table mx-auto p-2 mb-0">
             <span>Transaction Id: <span class="text-primary">{{transaction.transaction_id}}</span> </span>
             <span> Pin Code: <span class="text-primary">{{transaction.pin}}</span> </span>
+            <span> Amount: <span class="text-primary">{{transaction.amount|amount_without_decimal }}</span> </span>
         </p>
     </div>
 
@@ -59,12 +61,28 @@
                 {% endif %}
             </div>
 
+            {% if shared_accounts %}
+            <div class="list-group-item bg-light mt-4 lead py-1 text-center">
+                Shared to
+            </div>
+            <ul>
+                {% for account in shared_accounts %}
+                <li class="list-group-item">
+                    <b>Account Number: </b> {{account.account_no}} -
+                    <b>name: </b>
+                    {{account.user.first_name}} {{account.user.last_name}}
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+
+
         </form>
     </div>
 
     <div class="lead text-center text-danger px-4 py-4 my-4 bg-light justify-content-around">
 
-        <p><b>NB:</b> Please complete the Transaction within 24 hours after it is made.
+        <p><b>NB:</b> Please complete the Transaction within 24 hours after it is created.
             Otherwise It will revert back to your account after 24 hours.</p>
         <div class="d-flex justify-content-around">
             <a class="btn btn-success" href="{% url 'core:profile' %}">See Recent Transactions</a>

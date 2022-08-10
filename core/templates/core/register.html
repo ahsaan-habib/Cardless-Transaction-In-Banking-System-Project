@@ -2,7 +2,6 @@
 {% load static %}
 {% block title %} Register Account {% endblock title %}
 
-
 {% block content %}
 <div class="container">
   <div class="register-content card col-12 col-lg-10 mx-auto border-0 my-5 py-5 shadow">
@@ -14,12 +13,11 @@
       <div class="row">
         <div class="col-md-6">
           <div class="form-group">
-            <p class="text-danger">{{ field.errors }}</p>
             <div class="input-label">
-              <!-- <i class="fa fa-{{ field.icon }}"></i> -->
               {{ field.label_tag }}
             </div>
             {{ field }}
+            <p class="text-danger small">{{ field.errors }}</p>
           </div>
         </div>
         {%if forloop.last %}
@@ -29,12 +27,11 @@
       {% else %}
       <div class="col-md-6">
         <div class="form-group">
-          <p class="text-danger">{{ field.errors }}</p>
           <div class="input-label">
-            <!-- <i class="fa fa-{{ field.icon }}"></i> -->
             {{ field.label_tag }}
           </div>
           {{ field }}
+          <div class="text-danger small">{{ field.errors }}</div>
         </div>
       </div>
   </div>

@@ -6,8 +6,18 @@ document.addEventListener("DOMContentLoaded", () => {
   function stickyNavbar() {
     const topNavbar = document.querySelector("#top-navbar");
     const sticky = topNavbar.offsetTop;
-    console.log(sticky);
-    if (window.innerHeight > 1000 && window.pageYOffset >= sticky + 300) {
+    var body = document.body,
+      html = document.documentElement;
+
+    var height = Math.max(
+      body.scrollHeight,
+      body.offsetHeight,
+      html.clientHeight,
+      html.scrollHeight,
+      html.offsetHeight
+    );
+
+    if (height > 1000 && window.pageYOffset >= sticky + 300) {
       topNavbar.classList.add("NavbarSticky");
     } else {
       topNavbar.classList.remove("NavbarSticky");

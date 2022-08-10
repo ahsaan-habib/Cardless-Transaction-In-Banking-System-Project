@@ -25,6 +25,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'bootstrap',
     'fontawesome',
+    'django_apscheduler',
+    
 
     'atm',
     'banking',

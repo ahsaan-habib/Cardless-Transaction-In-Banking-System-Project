@@ -32,6 +32,15 @@ a:hover {
   background-color: #0029ea !important;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
 .title-text {
   font-size: 32px;
   font-weight: 300;

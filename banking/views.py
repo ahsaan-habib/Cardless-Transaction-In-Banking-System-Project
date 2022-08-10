@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+from django.utils import timezone
 import random
 from django.contrib import messages
 
@@ -299,21 +300,23 @@ def cash_by_code(request):
         if transaction_id and pin and amount:
             try:
                 trnx = Transaction.objects.get(transaction_id=transaction_id)
-                print(int(trnx.pin) == int(pin))
-                if trnx.pin == int(pin) and trnx.status == 'P'\
-                     and int(str(trnx.amount).split('.')[0]) == int(amount):
-                  
-                    with transaction.atomic():
-                        trnx.status = 'C'
-                        trnx.transaction_type = 'W'
-                        trnx.success = True
-                        trnx.save()
-                        messages.add_message(request, messages.INFO,'Amount Withdrawn successfully')
-                        return HttpResponseRedirect(reverse('banking:atm'))
-                        
+                # check if transaction created_at time greater than current time minus 24 hours
+                if trnx.created_at > timezone.now() - timezone.timedelta(hours=24):
+                    if trnx.pin == int(pin) and trnx.status == 'P'\
+                        and int(str(trnx.amount).split('.')[0]) == int(amount):
+                    
+                        with transaction.atomic():
+                            trnx.status = 'C'
+                            trnx.transaction_type = 'W'
+                            trnx.success = True
+                            trnx.save()
+                            messages.add_message(request, messages.INFO,'Amount Withdrawn successfully')
+                            return HttpResponseRedirect(reverse('banking:atm'))
+                            
+                    else:
+                        context['error_message'] = "Not Valid Combination To Withdraw Via Cash By Code"
                 else:
-                    context['error_message'] = "Not Valid Combination To Withdraw Via Cash By Code"
-
+                    context['error_message'] = "Transaction is expired"
             except Transaction.DoesNotExist:
                 context['error_message'] = "Not Valid Combination To Withdraw Via Cash By Code"
         else:
@@ -335,19 +338,22 @@ def revert_cash_by_code(request, transaction_id):
             elif trnx.status == 'C':
                 context['error_message'] = "This Transaction has been Completed already."
             else:
-                with transaction.atomic():
-                    trnx.status = 'F'
-                    trnx.transaction_type = 'W'
-                    trnx.success = False
-                    trnx.save()
-                    account.balance += trnx.amount
-                    account.save()
+                if trnx.created_at > timezone.now() - timezone.timedelta(hours=24):
+                    with transaction.atomic():
+                        trnx.status = 'F'
+                        trnx.transaction_type = 'W'
+                        trnx.success = False
+                        trnx.save()
+                        account.balance += trnx.amount
+                        account.save()
 
-                    messages.add_message(request, messages.INFO,'Amount Reverted successfully')
-                    return HttpResponseRedirect(reverse('banking:transaction_details',
-                                kwargs={'transaction_id': trnx.transaction_id}) )
-                                
-            context['transaction'] = transaction
+                        messages.add_message(request, messages.INFO,'Amount Reverted successfully')
+                        return HttpResponseRedirect(reverse('banking:transaction_details',
+                                    kwargs={'transaction_id': trnx.transaction_id}) )
+                                    
+                else:
+                    context['error_message'] = "Transaction is expired"
+                context['transaction'] = transaction
         else:
             context['error_message'] = "You are not allowed to access this Transaction"
     except Transaction.DoesNotExist:

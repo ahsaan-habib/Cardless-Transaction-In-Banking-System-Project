@@ -33,8 +33,8 @@
           <li class="nav-item {% if request.resolver_match.view_name == 'core:index'%}active{% endif %}">
             <a class="nav-link" href="{% url 'core:index' %}">Home</a>
           </li>
-          <li class="nav-item {% if request.resolver_match.view_name == 'banking:atm'%}active{% endif %}">
-            <a class="nav-link" href="{% url 'banking:atm' %}">ATM</a>
+          <li class="nav-item {% if request.resolver_match.view_name == 'atm:atm'%}active{% endif %}">
+            <a class="nav-link" href="{% url 'atm:atm' %}">ATM</a>
           </li>
           {% if request.user.is_authenticated %}
 

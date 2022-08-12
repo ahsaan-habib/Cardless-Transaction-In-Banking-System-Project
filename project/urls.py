@@ -11,6 +11,7 @@ admin.site.index_title = ''
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('banking/', include('banking.urls')),
+    path('atm/', include('atm.urls')),
     path('', include('core.urls')),
 
 ]

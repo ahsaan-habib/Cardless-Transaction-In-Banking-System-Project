@@ -15,11 +15,6 @@ from .forms import ProfileImageUpdateForm, ProfileUpdateForm, RegistrationForm, 
 
 
 def index(request):
-    # print comparison between now time and past time
-    print(timezone.now() - timezone.timedelta(hours=1))
-    print(timezone.now())
-    print( timezone.now() >  (timezone.now() - timezone.timedelta(hours=24)))
-    print( timezone.timedelta(hours=2, minutes=30))
     context ={}
     return render(request, 'core/index.html', context)
 

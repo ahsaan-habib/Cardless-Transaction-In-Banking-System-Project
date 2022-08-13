@@ -7,6 +7,7 @@ django-bootstrap-static==4.2.1
 django-extensions==3.1.5
 gunicorn==20.1.0
 Pillow==9.2.0
+psycopg2==2.9.3
 pydotplus==2.0.2
 pyparsing==3.0.9
 pytz==2022.1

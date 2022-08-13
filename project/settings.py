@@ -88,6 +88,16 @@ DATABASES = {
     }
 }
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'deb44l6mlu4j37',
+        'HOST': 'ec2-54-77-40-202.eu-west-1.compute.amazonaws.com',
+        'USER': 'rlyxvfwmvongse',
+        'PORT': '5432',
+        'PASSWORD': '2c9ac4aff40b9025c854e206420d4f695ec4c3b2ab091915becfc84b0caa818c',
+    }
+}
 
 
 # Password validation

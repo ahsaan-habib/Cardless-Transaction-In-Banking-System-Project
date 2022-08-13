@@ -11,7 +11,7 @@ SECRET_KEY = 'django-insecure-v##d+@*l^7tvm_rea#tn(c+z5flv#y%^@!b3!m1%nfwpg1!kvh
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["cbanking.herokuapp.com", ]
 
 
 # Application definition

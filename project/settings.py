@@ -91,11 +91,11 @@ AUTHENTICATION_BACKENDS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'deb44l6mlu4j37',
+        'NAME': 'd5gvutq9n3kdsb',
         'HOST': 'ec2-54-77-40-202.eu-west-1.compute.amazonaws.com',
-        'USER': 'rlyxvfwmvongse',
+        'USER': 'jbhuiyilgjilin',
         'PORT': '5432',
-        'PASSWORD': '2c9ac4aff40b9025c854e206420d4f695ec4c3b2ab091915becfc84b0caa818c',
+        'PASSWORD': 'd0ace38ffeb2bc12ca59b9343fe30977b24c0e2d6d3e285c3e2a68f1cffd5e9d',
     }
 }
 

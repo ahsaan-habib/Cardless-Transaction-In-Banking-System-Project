@@ -15,10 +15,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(verbose_name="email", max_length=64, null=True, blank=True)
     phone = models.CharField(validators=[
         RegexValidator(
-            regex=r'^\+?1?\d{9,15}$',
-            message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed."
+            regex=r'^01?\d{9}$',
+            message="Phone number must be entered in the format: '01XXXNNNNNN' in 11 digits."
         ),
-    ], max_length=20, null=True, blank=True
+    ], verbose_name="mobile number", max_length=15, unique=False, null=True, blank=True
     )
 
     date_joined = models.DateTimeField(verbose_name='date joined', auto_now_add=True)

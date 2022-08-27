@@ -1,6 +1,7 @@
 import uuid
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.conf import settings
+from django.core.validators import RegexValidator
 
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -50,6 +51,7 @@ class Transaction(models.Model):
         ('W', 'Withdraw'),
     )
     transaction_status_choices = (
+        ('I', 'Initiated'),
         ('P', 'Pending'),
         ('C', 'Complete'),
         ('R', 'Failed'),
@@ -59,13 +61,19 @@ class Transaction(models.Model):
     from_account = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True, blank=True, related_name='sender')
     to_account = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True, blank=True, related_name='reciever')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    pin = models.PositiveIntegerField(validators=[MinValueValidator(10000000), MaxValueValidator(99999999)], blank=True, null=True)
+    otp = models.PositiveIntegerField(validators=[MinValueValidator(100000), MaxValueValidator(999999)], blank=True, null=True)
     status = models.CharField(max_length=1, choices=transaction_status_choices, default='P')
     success = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    shared_accounts = models.ManyToManyField(Account, blank=True, related_name='shared_transactions')
-
+    cbc_beneficiary_account = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True, blank=True, related_name='cbc_beneficiary')
+    cbc_beneficiary_phone = models.CharField(validators=[
+        RegexValidator(
+            regex=r'^01?\d{9}$',
+            message="Phone number must be entered in the format: '01XXXNNNNNN' in 11 digits."
+        ),
+    ], verbose_name="mobile number", max_length=15, unique=False, null=True, blank=True
+    )
 
     def __str__(self):
         return f"{self.transaction_id }- {self.from_account} - {self.amount}"

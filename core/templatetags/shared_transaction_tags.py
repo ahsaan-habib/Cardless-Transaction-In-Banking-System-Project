@@ -7,7 +7,7 @@ register = template.Library()
 @register.filter
 def shared_transactions(user):
     if user.is_authenticated:
-        return Transaction.objects.filter(shared_accounts__in=[user.account], status="P").count()
+        return Transaction.objects.filter(cbc_beneficiary_account=user.account, status="P").count()
     return 0
 
 @register.filter

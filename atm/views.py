@@ -11,11 +11,14 @@ def atm(request):
     return render(request, 'atm/atm.html')
 
 
+# both owner and beneficiary can withdraw money with thier phone number otp
+# with transaction_lock() will be needed here
 def cash_by_code(request):
     context = {}
     if request.POST:
         transaction_id = request.POST['transaction_id']
-        pin = request.POST['pin']
+        pin = request.POST['pin'] #doesn't need pin
+        # add phone 
         amount = request.POST['amount']
         context['transaction_id'] = transaction_id
         context['pin'] = pin

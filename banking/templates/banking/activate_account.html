@@ -23,20 +23,43 @@
         {% csrf_token %}
         <h1 class="h3 my-4 font-weight-normal text-center">Activate Account</h1>
 
-        <div class="row align-items-center mb-0">
-            <input type="number" name="pin" id="inputPin" class="col-8 form-control rounded-0"
-                placeholder="Enter New PIN to activate Account" value="{{pin}}" required>
-            <button class="col-4 btn btn-primary btn-block rounded-0" type="submit">Activate
+        <div class="mb-0">
+            <input type="number" name="pin" id="inputPin" class="col-8 mx-auto form-control rounded-0"
+                placeholder="Enter New PIN to activate Account" value="{{activate_form.initial.pin}}" required>
+
+            <div class="text-primary small d-table mx-auto mb-4">
+                <span>Please enter your new pin to activate your account. Pin Must be in 5 digits not serial
+                    number.</span>
+            </div>
+            {% if not account_info.user.phone %}
+            <input type="number" name="phone" id="inputphone" class="col-8 mx-auto form-control rounded-0"
+                placeholder="Enter Your Phone Number" value="{{activate_form.initial.phone}}" required>
+            {% endif %}
+
+            {% for field in activate_form %}
+            <div class="text-danger small my-4 col-8 mx-auto">
+                <span>{{field.errors }}</span>
+            </div>
+            {% endfor %}
+
+            {% if activate_form.non_field_errors %}
+            <div class="text-danger small my-4 col-8 mx-auto ">
+                {{activate_form.non_field_errors}}
+            </div>
+
+            {% endif %}
+
+            <button class="d-table btn btn-primary mx-auto rounded-0" type="submit">Activate
                 Account</button>
         </div>
-        {% if pin_error_message %}
-        <div class="text-danger small">
-            <span>{{pin_error_message }}</span>
+
+        {% if error_message %}
+        <div class="text-danger my-4 small col-8 mx-auto">
+            <span>{{error_message }}</span>
         </div>
         {% endif %}
-        <div class="text-primary small">
-            <span>Please enter your new pin to activate your account. Pin Must be in 5 digits not serial number.</span>
-        </div>
+
+
 
 
     </form>

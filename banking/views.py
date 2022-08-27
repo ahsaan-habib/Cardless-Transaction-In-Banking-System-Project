@@ -6,8 +6,10 @@ from django.db import transaction
 from django.utils import timezone
 import random
 from django.contrib import messages
+from banking.forms import ActiveAccountForm, PhoneFieldForm
 
 from banking.models import Account, Transaction
+from core.models import User
 
 @login_required(login_url='core:login')
 def activate_account(request):
@@ -19,17 +21,25 @@ def activate_account(request):
         if account.active:
             return redirect('core:profile')
         if request.POST:
-            pin = request.POST['pin']
-            context['pin'] = pin
-            if pin and pin.isdigit() and int(pin) > 10000 and int(pin) < 99999 and int(pin) != account.pin:
+            form = ActiveAccountForm(request.POST or None)
+            if form.is_valid():
+                print(form.cleaned_data)
+                phone = request.POST.get('phone')
+                pin = request.POST.get("pin")
+                if phone:
+                    user = User.objects.get(id=user.id)
+                    user.phone = phone
+                    user.save()
                 account.pin = int(pin)
                 account.active = True
                 account.save()
+
                 messages.add_message(request, messages.INFO,
                                         'Your account has been activated. You can now make any transaction.')
                 return HttpResponseRedirect(reverse('core:profile'))
-            else:
-                context['pin_error_message'] = "Invalid pin"
+        else:
+            form = ActiveAccountForm()
+        context["activate_form"] = form
     except Account.DoesNotExist:
         context['error_message'] = "Something went wrong"
     return render(request, 'banking/activate_account.html', context)
@@ -193,7 +203,6 @@ def transaction_details(request, transaction_id):
 
 
 
-
 @login_required(login_url='core:login')
 def make_cash_by_code(request):
     user = request.user
@@ -204,7 +213,7 @@ def make_cash_by_code(request):
             amount = request.POST['amount']
             context['amount'] = amount
             print(amount)
-            if amount and amount.isdigit() and int(amount) > 0 and int(amount) < 999999999 and int(amount) % 500 == 0:
+            if amount and amount.isdigit() and int(amount) > 0 and int(amount) <= 20000 and int(amount) % 500 == 0:
                 try:
                     if account.balance >= int(amount):
                         with transaction.atomic():
@@ -214,16 +223,12 @@ def make_cash_by_code(request):
                                 from_account=account,
                                 amount=int(amount),
                                 transaction_type='T',
-                                status="P",
-                                pin =random.randint(00000000, 99999999),
+                                status="I",
+                                otp =random.randint(100000, 999999),
                                 success=False
                             )
-                            messages.add_message(request, messages.INFO, 
-                                    'Generating PIN code for cash withdrawal is success. Please manage transaction PIN carefully')
-                                
-
-                        return HttpResponseRedirect(reverse('banking:pending_transaction',
-                                    kwargs={'transaction_id': created_transaction.transaction_id}) )
+                            # send_sms with OTP()
+                        return HttpResponseRedirect(reverse('banking:verify_cash_by_code', kwargs={'transaction_id': created_transaction.transaction_id}) )
                     else:
                         context['amount_error_message'] = "Insufficient balance"
                     
@@ -242,13 +247,44 @@ def make_cash_by_code(request):
 
 
 @login_required(login_url='core:login')
+def verify_cash_by_code(request, transaction_id):
+    context = {}
+    try:
+        transaction = Transaction.objects.get(transaction_id=transaction_id, status='I')
+        if transaction.from_account.user == request.user:
+            if request.POST:
+                otp = request.POST.get('otp')
+                if transaction.otp == otp:
+                    transaction.status = 'P'
+                    transaction.save()
+                    messages.add_message(request, messages.INFO, 
+                                'Cash By Code Transaction Succesfully Created!')
+                    return HttpResponseRedirect(reverse('banking:pending_transaction',
+                        kwargs={'transaction_id': transaction.transaction_id}) )
+                else:
+                    context['form_error_message'] = "Invalid OTP, \
+                        You get total 3 times trial to verify this transaction"
+                    # give chance with resend otp btn
+                    pass
+                    # schedule task to revert back transaction within one hour
+                    
+            else:
+                pass 
+                # pass template with otp field in a form
+        else:
+            context['error_message'] = "You are not allowed to access this page"
+    except Transaction.DoesNotExist:
+        context['error_message'] = "Invalid Request."
+    return render(request, 'banking/verify_cash_by_code.html', context)
+
+
+@login_required(login_url='core:login')
 def pending_transaction(request, transaction_id):
     context = {}
     
     try:
         transaction = Transaction.objects.get(transaction_id=transaction_id)
-        if transaction.from_account.user == request.user or ( request.user in \
-             [ account.user for account in transaction.shared_accounts.all()]):
+        if transaction.from_account.user == request.user:
             if transaction.status == 'F':
                 context['error_message'] = "This Transaction has been Faild."
             elif transaction.status == 'C':
@@ -256,16 +292,33 @@ def pending_transaction(request, transaction_id):
             else:
                 if request.POST:
                     shared_account_no = request.POST['account_no']
-                    try:    
-                        account = Account.objects.get(account_no=shared_account_no)
-                        transaction.shared_accounts.add(account)
-                        transaction.save()
-                        pass
-                    except Account.DoesNotExist:
-                        context['account_error_message'] = "Beneficiary Account not found"
-                
+                    shared_phone = request.POST['phone']
+                    if (not shared_account_no and not shared_phone) or (shared_account_no and shared_phone):
+                        context['form_error_message'] = "You must select either Account number or mobile number and not Both "
+                    else: 
+                        if shared_account_no:
+                            try:
+                                account = Account.objects.get(account_no=shared_account_no)
+                                transaction.cbc_beneficiary_account = account
+                                transaction.save()
+                                context['shared'] = True
+                            except Account.DoesNotExist:
+                                context['shared_account_no'] = shared_account_no
+                                context['form_error_message'] = "Beneficiary Account not found"
+                        else:
+                            if shared_phone and shared_phone.isdigit() and int(shared_phone) > 1000000000 and int(shared_phone) <= 9999999999: 
+                                transaction.cbc_beneficiary_phone = shared_phone
+                                transaction.save()
+                                context['shared'] = True
+                            else:
+                                context['shared_phone'] = shared_phone
+                                context['form_error_message'] = "Phone number must be entered in the format: '01XXXNNNNNN' in 11 digits."
+                else:
+                    if transaction.cbc_beneficiary_account or transaction.cbc_beneficiary_phone:
+                        context['shared'] = True
             context['transaction'] = transaction
-            context['shared_accounts'] = transaction.shared_accounts.all()
+            context['cbc_beneficiary'] = transaction.cbc_beneficiary_account.account_no \
+                if transaction.cbc_beneficiary_account else transaction.cbc_beneficiary_phone
         else:
             context['error_message'] = "You are not allowed to access this Transaction"
     except Transaction.DoesNotExist:
@@ -277,9 +330,9 @@ def pending_transaction(request, transaction_id):
 def shared_transactions(request):
     user = request.user
     context = {}
-    transactions = Transaction.objects.filter(shared_accounts__user=user, status='P')
-    if transactions.__len__() > 0:
-        context['transactions'] = transactions
+    transaction_qs = Transaction.objects.filter(cbc_beneficiary_account=user.account, status='P')
+    if transaction_qs.exists():
+        context['transactions'] = transaction_qs
     else:
         context['error_message'] = "No Shared transactions"
     return render(request, 'banking/shared_transactions.html', context)

@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Verify Cash By Code {% endblock title %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'banking/css/index.css' %}">
+{% endblock stylesheet %}
+
+{% block content %}
+<div class="container">
+
+    {% if error_message %}
+
+    <div class="lead text-center text-danger px-4 py-4 my-4 bg-light justify-content-around">
+
+        <p>{{ error_message }}</p>
+
+    </div>
+
+    {% else %}
+
+
+    <div class="card col-12 col-lg-6 mx-auto border-0 my-5 py-5 shadow">
+
+        <form class="verify-form w-75 mx-auto" method="post">
+            {% csrf_token %}
+            <h1 class="h3 mb-4 font-weight-normal text-center">Verify Cash By Code</h1>
+
+            <div class="form-group">
+                <div class="input-label">
+                    Enter OTP
+                </div>
+                <input type="number" name="amount" id="inputAmount" class="form-control my-4 rounded-0"
+                    placeholder="Please Enter OTP" value="{{amount}}" required>
+                <div class="flex mb-4">
+                    <div class="small text-primary">We have sent an OTP to your Phone Number, Please check your SMS
+                        Inbox to find OTP</div>
+                    <a class="btn btn-sm px-4 py-1 rounded-0" href="#">resend OTP</a>
+                </div>
+
+                {% if form_error_message %}
+                <div class="text-danger my-4 small">
+                    <p>{{form_error_message}}</p>
+                </div>
+                {% endif %}
+            </div>
+
+
+            <button class="btn btn-sm btn-primary btn-block rounded-0 my-4" type="submit">Verify Cash By Code</button>
+
+        </form>
+
+    </div>
+
+    {% endif %}
+
+</div>
+{% endblock content %}

@@ -32,52 +32,59 @@
         <p class="text-dark w-75 mx-auto">
 
             Withdraw The money from nearest ATM using Cash By Code Option or
-            Share The Transaction Id & PIN Code to any Beneficiary.
+            Share The Cash By Code to any Beneficiary.
         </p>
         <p class="bg-white d-table mx-auto p-2 mb-0">
             <span>Transaction Id: <span class="text-primary">{{transaction.transaction_id}}</span> </span>
-            <span> Pin Code: <span class="text-primary">{{transaction.pin}}</span> </span>
             <span> Amount: <span class="text-primary">{{transaction.amount|amount_without_decimal }}</span> </span>
         </p>
     </div>
 
+    {% if shared %}
+    <div class="list-group-item bg-light mt-4 lead py-1 text-center">
+        Shared to {{cbc_beneficiary}}
+    </div>
+
+    {% else %}
 
     <div class="card mx-auto border-0 my-4 py-4 shadow">
 
         <form class="transaction-form w-75 mx-auto" method="POST">
             {% csrf_token %}
+
+            <div class="lead d-table mx-auto my-4">
+                <span>Be Careful about the following information you for sharing Cash by Code</span>
+
+            </div>
             <div class="form-group mb-0">
-                <div class="row align-items-center">
+                <div class="flex justify-content-center">
 
-                    <input type="number" name="account_no" id="inputAccountNo" class="form-control col-8 rounded-0"
-                        placeholder="Enter Beneficiary's Account Number" value="{{ account_no }}" required>
+                    <input type="number" name="phone" id="inputPhone" class="form-control my-4 col-8 mx-auto rounded-0"
+                        placeholder="Enter Beneficiary's mobile number" value="{{shared_phone}}">
+                    <div class="text-center block mx-auto">Or</div>
+                    <input type="number" name="account_no" id="inputAccountNo"
+                        class="form-control col-8 mx-auto my-4 rounded-0"
+                        placeholder="Enter Beneficiary's Account Number" value="{{ shared_account_no }}">
 
-                    <button type="submit" class="btn btn-primary col-4 rounded-0">Share To Beneficiary</button>
+                    <div class="text-danger text-center col-8 mx-auto small"> following Action will be irreversible,
+                        Please recheck mobile number or Account number of the beneficiary and only share to beneficiary
+                        you really trust him/her</div>
+
+
+
+                    {% if form_error_message %}
+                    <div class="col-8 mx-auto my-4 text-center text-danger small">
+                        <p>{{form_error_message}}</p>
+                    </div>
+                    {% endif %}
+
+                    <button type="submit" class="btn btn-primary d-table mx-auto px-5 my-4 rounded-0">Share To
+                        Beneficiary</button>
                 </div>
-                {% if account_error_message %}
-                <div class="text-danger small">
-                    <p>{{account_error_message}}</p>
-                </div>
-                {% endif %}
+
             </div>
-
-            {% if shared_accounts %}
-            <div class="list-group-item bg-light mt-4 lead py-1 text-center">
-                Shared to
-            </div>
-            <ul>
-                {% for account in shared_accounts %}
-                <li class="list-group-item">
-                    <b>Account Number: </b> {{account.account_no}} -
-                    <b>name: </b>
-                    {{account.user.first_name}} {{account.user.last_name}}
-                </li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-
-
         </form>
+        {% endif %}
     </div>
 
     <div class="lead text-center text-danger px-4 py-4 my-4 bg-light justify-content-around">

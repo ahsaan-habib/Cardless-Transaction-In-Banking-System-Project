@@ -6,7 +6,8 @@ from django.db import transaction
 from django.utils import timezone
 import random
 from django.contrib import messages
-from banking.forms import ActiveAccountForm, PhoneFieldForm
+from banking.forms import ActiveAccountForm
+from sms import send_sms
 
 from banking.models import Account, Transaction
 from core.models import User
@@ -219,15 +220,25 @@ def make_cash_by_code(request):
                         with transaction.atomic():
                             account.balance -= int(amount)
                             account.save()
+                            otp = random.randint(100000, 999999)
                             created_transaction = Transaction.objects.create(
                                 from_account=account,
                                 amount=int(amount),
                                 transaction_type='T',
                                 status="I",
-                                otp =random.randint(100000, 999999),
+                                otp =otp,
                                 success=False
                             )
-                            # send_sms with OTP()
+                        # send_sms with OTP()
+                        
+                        text = f"TheDear Customer, Your One-Time Password is {otp}. Please use this OTP to complete the transaction within 150 seconds."
+        
+                        send_sms(
+                            text,
+                            '+8801568267336',
+                            [account.user.phone],
+                            fail_silently=False
+                        )
                         return HttpResponseRedirect(reverse('banking:verify_cash_by_code', kwargs={'transaction_id': created_transaction.transaction_id}) )
                     else:
                         context['amount_error_message'] = "Insufficient balance"
@@ -236,7 +247,7 @@ def make_cash_by_code(request):
                     context['amount_error_message'] = "Account not found, Something went wrong, please Contact Admin"
             else:
                 context['amount_error_message'] = "Amount must be multiple of 500 and in range between\
-                     500 to 10000000 without decimal point formate"
+                     500 to 20000 without decimal point formate"
 
     else:
         context['account_error_message'] = "Account is not active, you must activate your \
@@ -252,22 +263,24 @@ def verify_cash_by_code(request, transaction_id):
     try:
         transaction = Transaction.objects.get(transaction_id=transaction_id, status='I')
         if transaction.from_account.user == request.user:
+            context['transaction_id'] = transaction_id
             if request.POST:
                 otp = request.POST.get('otp')
-                if transaction.otp == otp:
-                    transaction.status = 'P'
-                    transaction.save()
-                    messages.add_message(request, messages.INFO, 
-                                'Cash By Code Transaction Succesfully Created!')
-                    return HttpResponseRedirect(reverse('banking:pending_transaction',
-                        kwargs={'transaction_id': transaction.transaction_id}) )
-                else:
-                    context['form_error_message'] = "Invalid OTP, \
-                        You get total 3 times trial to verify this transaction"
-                    # give chance with resend otp btn
-                    pass
-                    # schedule task to revert back transaction within one hour
-                    
+                try:
+                    if transaction.otp == int(otp):
+                        transaction.status = 'P'
+                        transaction.save()
+                        messages.add_message(request, messages.INFO, 
+                                    'Cash By Code Transaction Succesfully Created!')
+                        return HttpResponseRedirect(reverse('banking:pending_transaction',
+                            kwargs={'transaction_id': transaction.transaction_id}) )
+                    else:
+                        context['form_error_message'] = "Invalid OTP"
+                        pass
+                        #TODO: schedule task to revert back transaction within one hour
+                except TypeError:
+                    context['form_error_message'] = "Invalid OTP"
+
             else:
                 pass 
                 # pass template with otp field in a form
@@ -276,6 +289,35 @@ def verify_cash_by_code(request, transaction_id):
     except Transaction.DoesNotExist:
         context['error_message'] = "Invalid Request."
     return render(request, 'banking/verify_cash_by_code.html', context)
+
+
+@login_required(login_url='core:login')
+def resend_otp(request, transaction_id):
+    try:
+        transaction = Transaction.objects.get(transaction_id=transaction_id, status='I')
+        if transaction.from_account.user == request.user:
+            otp = random.randint(100000, 999999)
+            transaction.otp = otp
+            transaction.save()
+            text = f"TheDear Customer, Your One-Time Password is {otp}. Please use this OTP to complete the transaction within 150 seconds."
+        
+            send_sms(
+                text,
+                '+8801568267336',
+                [transaction.from_account.user.phone],
+                fail_silently=False
+            )
+            messages.add_message(request, messages.INFO, 
+                        'New OTP sent To Your Mobile Number!')
+            return HttpResponseRedirect(reverse('banking:verify_cash_by_code',
+                kwargs={'transaction_id': transaction.transaction_id}) )
+    except Transaction.DoesNotExist:
+        messages.add_message(request, messages.INFO, 
+                    'Not A Valid Request, try Again')
+    messages.add_message(request, messages.INFO, 
+                    'Not Autorized to access this page')
+    return HttpResponseRedirect(reverse('banking:make_cash_by_code') )
+
 
 
 @login_required(login_url='core:login')

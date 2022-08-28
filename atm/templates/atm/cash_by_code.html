@@ -16,30 +16,46 @@
         <form class="form w-75 mx-auto pb-3" method="post">
             {% csrf_token %}
 
+            {% if error_message %}
+            <div class="my-2">
+                <div class="small text-center text-danger px-4 py-4 my-4 bg-light">
+                    {{ error_message }}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="small text-center text-danger px-4 py-4 my-4 bg-light">
+                {% for field in form %}
+                {% if field.errors %}
+                <div class="">
+                    {{ field.errors }}
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+
             <div class="atm-form-group">
                 <input type="number" name="transaction_id" id="transaction-id" class="atm-form-control rounded-0"
                     placeholder="Enter Transaction ID" value="{{ transaction_id }}" required autofocus>
 
             </div>
-            <div class="atm-form-group">
-                <input type="number" name="pin" id="inputPin" class="atm-form-control rounded-0"
-                    placeholder="Enter Transaction PIN" value="{{pin}}" required>
-
-            </div>
 
             <div class="atm-form-group">
                 <input type="number" name="amount" id="inputAmount" class="atm-form-control rounded-0 mb-0"
-                    placeholder="Verify Amount of Cash" value="{{amount}}" required>
-                <div class="ml-5 mb-3 small text-primary">Enter amount without decimal point</div>
+                    placeholder="Enter Amount of Cash" value="{{amount}}" required>
+                <div class="ml-5 mb-3 small text-primary mx-auto text-center">Enter amount without decimal point</div>
+            </div>
 
+            <div class="atm-form-group">
+                <input type="number" name="cbc_beneficiary_phone" id="inputPhone"
+                    class="atm-form-control rounded-0 mb-0" placeholder="Enter phone Number" value="{{phone}}" required>
+                <div class="ml-5 mb-3 small text-primary text-center mr-5">Enter Your Phone Number associated with
+                    Bank Account or if you are a beneficiary without Registered Bank Account Enter Your Valid Phone
+                    Number in which invitation sent By Sender</div>
             </div>
-            {% if error_message %}
-            <div class="my-2">
-                <div class="title-text text-center text-danger px-4 py-4 my-4 bg-light">
-                    {{ error_message }}
-                </div>
-            </div>
-            {% endif %}
+
+
+
 
             <button class="atm-btn" type="submit">Get Cash With Code</button>
 

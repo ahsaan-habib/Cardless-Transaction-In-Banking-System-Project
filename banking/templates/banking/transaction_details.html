@@ -50,6 +50,9 @@
                     Depositted
                     {% elif transaction.transaction_type == 'W' %}
                     withdrawn
+                    {% if transaction.status == 'C' and transaction.cbc_beneficiary_phone %}
+                    <span class="text-success">with Cash By Code</span> using {{transaction.cbc_beneficiary_phone}}
+                    {% endif %}
                     {% elif transaction.transaction_type == 'T' %}
                     {% if transaction.to_account.user == user %}
                     Received
@@ -58,6 +61,7 @@
                     {% endif %}
                     {% endif %}
                 </p>
+
                 <p><b>Amount:</b> {{transaction.amount}}</p>
                 <p><b>time:</b> {{transaction.updated_at}}</p>
                 <p><b>Status:</b>

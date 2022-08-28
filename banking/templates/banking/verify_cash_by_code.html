@@ -31,12 +31,12 @@
                 <div class="input-label">
                     Enter OTP
                 </div>
-                <input type="number" name="amount" id="inputAmount" class="form-control my-4 rounded-0"
-                    placeholder="Please Enter OTP" value="{{amount}}" required>
+                <input type="number" name="otp" id="inputOtp" class="form-control mb-4 rounded-0"
+                    placeholder="Please Enter OTP" required>
                 <div class="flex mb-4">
                     <div class="small text-primary">We have sent an OTP to your Phone Number, Please check your SMS
                         Inbox to find OTP</div>
-                    <a class="btn btn-sm px-4 py-1 rounded-0" href="#">resend OTP</a>
+
                 </div>
 
                 {% if form_error_message %}
@@ -50,6 +50,11 @@
             <button class="btn btn-sm btn-primary btn-block rounded-0 my-4" type="submit">Verify Cash By Code</button>
 
         </form>
+        <div class="small text-info d-flex my-4 mx-auto">
+            Having trouble to get OTP?
+            <a href="{% url 'banking:resend_otp' transaction_id %}"
+                class="btn btn-sm btn-primary px-2 py-0 ml-3 rounded-0">Resend OTP</a>
+        </div>
 
     </div>
 

@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
-  window.addEventListener("scroll", () => {
-    stickyNavbar();
-  });
+  // window.addEventListener("scroll", () => {
+  //   stickyNavbar();
+  // });
 
   function stickyNavbar() {
     const topNavbar = document.querySelector("#top-navbar");

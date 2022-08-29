@@ -24,6 +24,7 @@
             </div>
             {% endif %}
 
+            {% if form %}
             <div class="small text-center text-danger px-4 py-4 my-4 bg-light">
                 {% for field in form %}
                 {% if field.errors %}
@@ -33,7 +34,7 @@
                 {% endif %}
                 {% endfor %}
             </div>
-
+            {% endif %}
             <div class="atm-form-group">
                 <input type="number" name="transaction_id" id="transaction-id" class="atm-form-control rounded-0"
                     placeholder="Enter Transaction ID" value="{{ transaction_id }}" required autofocus>

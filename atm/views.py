@@ -5,6 +5,7 @@ from django.db import transaction
 from django.utils import timezone
 from django.contrib import messages
 from atm.form import CBCTransactionForm
+import random
 
 from banking.models import Account, Transaction
 from core.models import User
@@ -64,27 +65,19 @@ def cash_by_code(request):
 
 
 def withdraw_by_verifying_otp(request, transaction_id, phone):
-    check_trnx = Transaction.objects.filter(transaction_id=transaction_id, status='P')
-    if check_trnx.exists():
-        if str(check_trnx[0].from_account.user.phone) == phone:
+    try:
+        check_trnx = Transaction.objects.get(transaction_id=transaction_id, status='P')
+    
+        if str(check_trnx.from_account.user.phone) == phone:
             pass
-        elif check_trnx[0].cbc_beneficiary_account and str(check_trnx[0].cbc_beneficiary_account.user.phone) == phone:
+        elif check_trnx.cbc_beneficiary_account and str(check_trnx.cbc_beneficiary_account.user.phone) == phone:
             pass
-        elif check_trnx[0].cbc_beneficiary_phone and str(check_trnx[0].cbc_beneficiary_phone) == phone:
+        elif check_trnx.cbc_beneficiary_phone and str(check_trnx.cbc_beneficiary_phone) == phone:
             pass
         else:
             messages.add_message(request, messages.ERROR, "Phone Number not valid or something went wrong!")
             return HttpResponseRedirect(reverse('atm:atm'))
-        # send OTP via SMS to the phone number
-        text = f"TheDear Customer, Your One-Time Password is {check_trnx[0].otp}. Please use this OTP to complete the transaction within 150 seconds."
         
-        from sms import send_sms
-        send_sms(
-            text,
-            '+8801568267336',
-            [phone],
-            fail_silently=False
-        )
         if request.POST:
             otp = request.POST.get('otp')
             print(int(phone))
@@ -102,13 +95,26 @@ def withdraw_by_verifying_otp(request, transaction_id, phone):
                                 'Cash By Code Transaction Succesfully Completed!')
                     else:
                         messages.add_message(request, messages.INFO, "Invalid OTP Provided.")
-                except Transaction.DoesNotExist:
-                    messages.add_message(request, messages.ERROR, "Transaction Expired Or Locked, Please Contact Support If This Problem Persist.")
-            except TypeError:
-                messages.add_message(request, messages.INFO, "Invalid OTP Provided.")
+                except TypeError:
+                    messages.add_message(request, messages.INFO, "Invalid OTP Provided.")
+            except Transaction.DoesNotExist:
+                messages.add_message(request, messages.ERROR, "Transaction Expired Or Locked, Please Contact Support If This Problem Persist.")
             return HttpResponseRedirect(reverse('atm:atm'))
+        else:
+            # send OTP via SMS to the phone number
+            otp = random.randint(100000, 999999)
+            check_trnx.otp = otp
+            check_trnx.save()
+            text = f"TheDear Customer, Your One-Time Password is {otp}. Please use this OTP to complete the transaction within 150 seconds."
+            from sms import send_sms
+            send_sms(
+                text,
+                '+8801568267336',
+                [phone],
+                fail_silently=False
+            )
         return render(request, 'atm/verify_cbc_otp.html', {})
-    else:
+    except Transaction.DoesNotExist:
         messages.add_message(request, messages.ERROR, "Transaction Not Valid at this moment")
         return HttpResponseRedirect(reverse('atm:atm'))
                                 
@@ -126,7 +132,7 @@ def withdraw(request):
         context['pin'] = pin 
         if amount and account_no and pin:
             # amount must be divided by 500 to get the number of notes
-            if amount.isdigit() and int(amount) > 0 and int(amount) < 999999999 and int(amount) % 500 == 0:
+            if amount.isdigit() and int(amount) > 0 and int(amount) <= 1000000 and int(amount) % 500 == 0:
             
                 if pin.isdigit() and int(pin) > 10000 and int(pin) < 99999:
                     try:
@@ -158,7 +164,7 @@ def withdraw(request):
                 else:
                     context['error_message'] = "Invalid pin"
             else:
-                context['error_message'] = "Amount must be multiple of 500 and in range between 500 to 10000000"
+                context['error_message'] = "Amount must be multiple of 500 and in range between 500 to 100000"
         else:
             context['error_message'] = "Please fill all Options"
 

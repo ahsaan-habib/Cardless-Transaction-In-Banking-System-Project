@@ -82,10 +82,10 @@ def withdraw_by_verifying_otp(request, transaction_id, phone):
             otp = request.POST.get('otp')
             print(int(phone))
             try:
-                trnx = Transaction.objects.select_for_update().get(transaction_id=transaction_id, status='P')
-                try:
-                    if trnx.otp == int(otp):
-                        with transaction.atomic():
+                with transaction.atomic():
+                    trnx = Transaction.objects.select_for_update().get(transaction_id=transaction_id, status='P')
+                    try:
+                        if trnx.otp == int(otp):
                             trnx.status = 'C'
                             trnx.transaction_type = 'W'
                             trnx.success = True
@@ -93,10 +93,10 @@ def withdraw_by_verifying_otp(request, transaction_id, phone):
                             trnx.save()
                             messages.add_message(request, messages.INFO, 
                                 'Cash By Code Transaction Succesfully Completed!')
-                    else:
+                        else:
+                            messages.add_message(request, messages.INFO, "Invalid OTP Provided.")
+                    except TypeError:
                         messages.add_message(request, messages.INFO, "Invalid OTP Provided.")
-                except TypeError:
-                    messages.add_message(request, messages.INFO, "Invalid OTP Provided.")
             except Transaction.DoesNotExist:
                 messages.add_message(request, messages.ERROR, "Transaction Expired Or Locked, Please Contact Support If This Problem Persist.")
             return HttpResponseRedirect(reverse('atm:atm'))
